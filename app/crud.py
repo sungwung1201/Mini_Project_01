@@ -14,6 +14,7 @@ from .models import (
     Score,
     Session as CourseSession,
     Student,
+    User,
 )
 from .schemas import (
     AssessmentCreate,
@@ -22,7 +23,9 @@ from .schemas import (
     ScoreInput,
     SessionCreate,
     StudentCreate,
+    UserCreate,
 )
+from .security import get_password_hash, verify_password
 
 
 def create_student(db: Session, payload: StudentCreate) -> Student:
@@ -239,3 +242,29 @@ def grade_summary_for_course(db: Session, course_id: int):
         "average_score": average_score,
         "assessments": assessments,
     }
+
+
+# Auth / User
+def get_user_by_username(db: Session, username: str) -> User | None:
+    return db.scalars(select(User).where(User.username == username)).first()
+
+
+def create_user(db: Session, payload: UserCreate) -> User:
+    user = User(
+        username=payload.username,
+        password_hash=get_password_hash(payload.password),
+        role=payload.role,
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return user
+
+
+def authenticate_user(db: Session, username: str, password: str) -> User | None:
+    user = get_user_by_username(db, username)
+    if not user:
+        return None
+    if not verify_password(password, user.password_hash):
+        return None
+    return user

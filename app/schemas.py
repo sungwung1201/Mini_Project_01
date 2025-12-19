@@ -145,3 +145,29 @@ class CourseGradeSummary(BaseModel):
     course_name: str
     average_score: Optional[float]
     assessments: List[AssessmentRead]
+
+
+class UserBase(BaseModel):
+    username: str
+    role: str = Field("teacher", description="admin/teacher")
+
+
+class UserCreate(UserBase):
+    password: str = Field(..., min_length=6)
+
+
+class UserRead(UserBase):
+    id: int
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
+
+class TokenData(BaseModel):
+    username: str | None = None

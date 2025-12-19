@@ -10,6 +10,7 @@ import {
   Score,
   Session,
   Student,
+  login,
 } from './api';
 
 const attendanceOptions = [
@@ -21,51 +22,108 @@ const attendanceOptions = [
 
 type Tab = 'students' | 'courses' | 'attendance' | 'grades';
 
+type LoadState<T> = {
+  data: T | null;
+  loading: boolean;
+  error: string | null;
+};
+
 function useLoad<T>(fetcher: () => Promise<T>, deps: unknown[] = []) {
-  const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [state, setState] = useState<LoadState<T>>({ data: null, loading: false, error: null });
 
   useEffect(() => {
     let mounted = true;
-    setLoading(true);
-    setError(null);
+    setState((prev) => ({ ...prev, loading: true, error: null }));
     fetcher()
-      .then((res) => mounted && setData(res))
-      .catch((err) => mounted && setError(err?.response?.data?.detail || err.message))
-      .finally(() => mounted && setLoading(false));
+      .then((res) => mounted && setState({ data: res, loading: false, error: null }))
+      .catch((err) => mounted && setState({ data: null, loading: false, error: err?.response?.data?.detail || err.message }))
+      .finally(() => mounted && setState((prev) => ({ ...prev, loading: false })));
     return () => {
       mounted = false;
     };
   }, deps);
 
-  return { data, loading, error, setData };
+  return { ...state, setData: (fn: (prev: T | null) => T | null) => setState((prev) => ({ ...prev, data: fn(prev.data) })) };
 }
 
-function Header({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
+function LoginCard({ onSuccess }: { onSuccess: () => void }) {
+  const [username, setUsername] = useState('admin');
+  const [password, setPassword] = useState('admin123');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const submit = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      await login(username, password);
+      onSuccess();
+    } catch (e: any) {
+      setError(e?.response?.data?.detail || '로그인 실패');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="login-wrap">
+      <div className="login-card">
+        <h2>학생 관리 시스템</h2>
+        <p className="muted">로그인하여 시작하세요</p>
+        <div className="field">
+          <label>아이디</label>
+          <input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="아이디를 입력하세요" />
+        </div>
+        <div className="field">
+          <label>비밀번호</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="비밀번호를 입력하세요"
+          />
+        </div>
+        <button onClick={submit} disabled={loading} style={{ width: '100%' }}>
+          {loading ? '로그인 중...' : '로그인'}
+        </button>
+        {error && <div className="error-text">{error}</div>}
+        <p className="muted" style={{ marginTop: 12 }}>
+          테스트 계정: admin / admin123
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function Header({ tab, setTab, onLogout }: { tab: Tab; setTab: (t: Tab) => void; onLogout: () => void }) {
   return (
     <div className="header">
       <div>
         <h1 style={{ margin: 0 }}>학생 출결·성적 관리</h1>
-        <small>API Key 기반 데모 UI (FastAPI + React)</small>
+        <small>로그인 후 사용 가능합니다</small>
       </div>
-      <div className="tabs">
-        {(
-          [
-            { key: 'students', label: '학생' },
-            { key: 'courses', label: '강좌' },
-            { key: 'attendance', label: '출결' },
-            { key: 'grades', label: '성적' },
-          ] as const
-        ).map((item) => (
-          <div
-            key={item.key}
-            className={`tab ${tab === item.key ? 'active' : ''}`}
-            onClick={() => setTab(item.key)}
-          >
-            {item.label}
-          </div>
-        ))}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+        <div className="tabs">
+          {(
+            [
+              { key: 'students', label: '학생' },
+              { key: 'courses', label: '강좌' },
+              { key: 'attendance', label: '출결' },
+              { key: 'grades', label: '성적' },
+            ] as const
+          ).map((item) => (
+            <div
+              key={item.key}
+              className={`tab ${tab === item.key ? 'active' : ''}`}
+              onClick={() => setTab(item.key)}
+            >
+              {item.label}
+            </div>
+          ))}
+        </div>
+        <button className="secondary" onClick={onLogout}>
+          로그아웃
+        </button>
       </div>
     </div>
   );
@@ -115,7 +173,7 @@ function StudentSection() {
       </div>
       <button onClick={addStudent}>학생 추가</button>
       {loading && <p>불러오는 중...</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p className="error-text">{error}</p>}
       <table className="table">
         <thead>
           <tr>
@@ -207,7 +265,7 @@ function CourseSection() {
         </button>
       </div>
       {loading && <p>불러오는 중...</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p className="error-text">{error}</p>}
       <table className="table">
         <thead>
           <tr>
@@ -569,10 +627,20 @@ function GradeSection() {
 
 export default function App() {
   const [tab, setTab] = useState<Tab>('students');
+  const [loggedIn, setLoggedIn] = useState(() => Boolean(localStorage.getItem('token')));
+
+  const logout = () => {
+    localStorage.removeItem('token');
+    setLoggedIn(false);
+  };
+
+  if (!loggedIn) {
+    return <LoginCard onSuccess={() => setLoggedIn(true)} />;
+  }
 
   return (
     <div className="container">
-      <Header tab={tab} setTab={setTab} />
+      <Header tab={tab} setTab={setTab} onLogout={logout} />
       <div className="grid">
         {tab === 'students' && <StudentSection />}
         {tab === 'courses' && <CourseSection />}

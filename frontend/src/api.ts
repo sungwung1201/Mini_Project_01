@@ -1,15 +1,17 @@
 import axios from 'axios';
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://127.0.0.1:8000';
-const API_KEY = import.meta.env.VITE_API_KEY || 'devkey';
 
 export const api = axios.create({
   baseURL: API_BASE,
 });
 
 api.interceptors.request.use((config) => {
-  config.headers = config.headers || {};
-  config.headers['X-API-Key'] = API_KEY;
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers = config.headers || {};
+    config.headers.Authorization = `Bearer ${token}`;
+  }
   return config;
 });
 
@@ -81,4 +83,17 @@ export type CourseGradeSummary = {
   course_name: string;
   average_score?: number;
   assessments: Assessment[];
+};
+
+export const login = async (username: string, password: string) => {
+  const params = new URLSearchParams();
+  params.append('username', username);
+  params.append('password', password);
+  params.append('grant_type', 'password');
+  const res = await api.post('/auth/login', params, {
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  });
+  const token = res.data.access_token;
+  localStorage.setItem('token', token);
+  return token;
 };

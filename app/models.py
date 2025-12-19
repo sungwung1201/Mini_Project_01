@@ -73,6 +73,19 @@ class Enrollment(Base):
     student = relationship("Student", back_populates="enrollments")
 
 
+class User(Base):
+    __tablename__ = "users"
+    __table_args__ = (UniqueConstraint("username", name="uq_user_username"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    username: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
+    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+    role: Mapped[str] = mapped_column(String(20), default="teacher", nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, server_default=func.now(), nullable=False
+    )
+
+
 class Session(Base):
     __tablename__ = "sessions"
     __table_args__ = (UniqueConstraint("course_id", "session_date", name="uq_course_session_date"),)
