@@ -882,7 +882,7 @@ function GradeSection({ notify }: { notify: (type: Toast['type'], msg: string) =
   return (
     <div className="card">
       <h2 className="section-title">성적</h2>
-      <div className="form-row">
+      <div className="form-row tight">
         <div>
           <label>강좌 선택</label>
           <select value={selectedCourse ?? ''} onChange={(e) => setSelectedCourse(Number(e.target.value))}>
@@ -915,9 +915,11 @@ function GradeSection({ notify }: { notify: (type: Toast['type'], msg: string) =
             onChange={(e) => setAssessmentForm({ ...assessmentForm, max_score: Number(e.target.value) })}
           />
         </div>
-        <button className="btn-compact" style={{ minWidth: 110 }} onClick={addAssessment}>
-          평가 추가
-        </button>
+        <div className="action-cell">
+          <button className="btn-compact" style={{ minWidth: 110 }} onClick={addAssessment}>
+            평가 추가
+          </button>
+        </div>
       </div>
 
       {assessments && assessments.length > 0 && (
@@ -953,7 +955,7 @@ function GradeSection({ notify }: { notify: (type: Toast['type'], msg: string) =
         </div>
       )}
 
-      <div className="form-row" style={{ marginTop: 12 }}>
+      <div className="form-row tight" style={{ marginTop: 12 }}>
         <div>
           <label>학생 성적 조회</label>
           <select value={selectedStudent ?? ''} onChange={(e) => setSelectedStudent(Number(e.target.value))}>
@@ -965,18 +967,20 @@ function GradeSection({ notify }: { notify: (type: Toast['type'], msg: string) =
             ))}
           </select>
         </div>
-        <button className="btn-compact" style={{ minWidth: 120 }} onClick={loadStudentGrade}>
-          학생 성적 보기
-        </button>
-        <button className="secondary btn-compact" style={{ minWidth: 140 }} onClick={loadCourseGrade}>
-          강좌 성적 요약 보기
-        </button>
-        <button className="secondary btn-compact" style={{ minWidth: 120 }} onClick={exportCourseGrade} disabled={!courseGrade}>
-          강좌 성적 CSV
-        </button>
-        <button className="secondary btn-compact" style={{ minWidth: 120 }} onClick={exportStudentGrades} disabled={!studentGrade}>
-          학생 성적 CSV
-        </button>
+        <div className="action-row">
+          <button className="btn-compact" style={{ minWidth: 110 }} onClick={loadStudentGrade}>
+            학생 성적 보기
+          </button>
+          <button className="secondary btn-compact" style={{ minWidth: 130 }} onClick={loadCourseGrade}>
+            강좌 성적 요약 보기
+          </button>
+          <button className="secondary btn-compact" style={{ minWidth: 120 }} onClick={exportCourseGrade} disabled={!courseGrade}>
+            강좌 성적 CSV
+          </button>
+          <button className="secondary btn-compact" style={{ minWidth: 120 }} onClick={exportStudentGrades} disabled={!studentGrade}>
+            학생 성적 CSV
+          </button>
+        </div>
       </div>
 
       {studentGrade && (
