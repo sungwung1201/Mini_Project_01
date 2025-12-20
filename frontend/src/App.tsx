@@ -111,14 +111,14 @@ function Sidebar({
   onRoleChange: (r: Role) => void;
 }) {
   const baseItems: { key: Tab; label: string; icon: string }[] = [
-    { key: 'dashboard', label: '대시보드', icon: '🏠' },
-    { key: 'attendance', label: '출결 관리', icon: '🗓️' },
-    { key: 'grades', label: '성적 관리', icon: '📊' },
-    { key: 'assignments', label: '과제 관리', icon: '📂' },
+    { key: 'dashboard', label: '대시보드', icon: '🧭' },
+    { key: 'attendance', label: '출결 관리', icon: '⏰' },
+    { key: 'grades', label: '성적 관리', icon: '🎯' },
+    { key: 'assignments', label: '과제 관리', icon: '🧾' },
   ];
   const adminOnly: { key: Tab; label: string; icon: string }[] = [
-    { key: 'students', label: '학생 관리', icon: '🧑‍🎓' },
-    { key: 'courses', label: '과정 관리', icon: '🏫' },
+    { key: 'students', label: '학생 관리', icon: '👩‍🎓' },
+    { key: 'courses', label: '과정 관리', icon: '📘' },
   ];
   const items = role === 'admin' ? [...baseItems.slice(0, 1), ...adminOnly, ...baseItems.slice(1)] : baseItems;
 
