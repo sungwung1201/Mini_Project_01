@@ -20,7 +20,7 @@ const attendanceOptions = [
   { value: 'excused', label: '공결' },
 ] as const;
 
-type Tab = 'dashboard' | 'students' | 'courses' | 'attendance' | 'grades';
+type Tab = 'dashboard' | 'students' | 'courses' | 'attendance' | 'grades' | 'assignments';
 type Role = 'admin' | 'teacher';
 type Toast = { id: number; type: 'success' | 'error'; message: string };
 
@@ -114,6 +114,7 @@ function Sidebar({
     { key: 'dashboard', label: '대시보드' },
     { key: 'attendance', label: '출결 관리' },
     { key: 'grades', label: '성적 관리' },
+    { key: 'assignments', label: '과제 관리' },
   ];
   const adminOnly: { key: Tab; label: string }[] = [
     { key: 'students', label: '학생 관리' },
@@ -257,8 +258,11 @@ function DashboardSection({ go }: { go: (tab: Tab) => void }) {
           <button className="quick-card" onClick={() => go('courses')}>
             과정/강좌 관리
           </button>
-          <button className="quick-card" onClick={() => go('grades')}>
-            과제 관리 (준비)
+          <button className="quick-card" onClick={() => go('assignments')}>
+            과제 관리
+          </button>
+          <button className="quick-card" onClick={() => go('assignments')}>
+            과제 관리
           </button>
         </div>
       </div>
@@ -327,16 +331,6 @@ function DashboardSection({ go }: { go: (tab: Tab) => void }) {
         </ul>
       </div>
 
-      <div className="card">
-        <div className="header">
-          <h3 style={{ margin: 0 }}>과제 관리</h3>
-          <span className="badge">준비중</span>
-        </div>
-        <p className="muted">
-          과제 생성/제출/채점 기능은 곧 추가 예정입니다. 현재는 성적 탭에서 시험/과제 점수를 입력해 관리하고, 추후 전용 과제
-          관리 화면에 연결할 계획입니다.
-        </p>
-      </div>
     </div>
   );
 }
@@ -1011,6 +1005,111 @@ function GradeSection({ notify }: { notify: (type: Toast['type'], msg: string) =
   );
 }
 
+function AssignmentSection({ notify }: { notify: (type: Toast['type'], msg: string) => void }) {
+  const { data: students } = useLoad<Student[]>(async () => (await api.get('/students')).data, []);
+  const { data: courses } = useLoad<Course[]>(async () => (await api.get('/courses')).data, []);
+  const [selectedCourse, setSelectedCourse] = useState<number | null>(null);
+  const { data: assignments, setData: setAssignments } = useLoad<Assessment[] | null>(
+    async () => (selectedCourse ? (await api.get(`/courses/${selectedCourse}/assessments`)).data : []),
+    [selectedCourse]
+  );
+  const [assignmentForm, setAssignmentForm] = useState({ name: '', weight: 0.1, max_score: 100 });
+  const [scoreForm, setScoreForm] = useState<Record<string, number>>({});
+
+  const createAssignment = async () => {
+    if (!selectedCourse) return;
+    const res = await api.post<Assessment>(`/courses/${selectedCourse}/assessments`, assignmentForm);
+    setAssignments((prev) => (prev ? [res.data, ...prev] : [res.data]));
+    notify('success', '과제가 추가되었습니다.');
+  };
+
+  const saveAssignmentScores = async (assessmentId: number) => {
+    const payload = Object.entries(scoreForm).map(([studentId, raw_score]) => ({
+      student_id: Number(studentId),
+      raw_score,
+    }));
+    await api.post(`/assessments/${assessmentId}/scores/bulk`, payload);
+    notify('success', '과제 점수가 저장되었습니다.');
+  };
+
+  return (
+    <div className="card">
+      <h2 className="section-title">과제 관리</h2>
+      <div className="form-row">
+        <div>
+          <label>강좌 선택</label>
+          <select value={selectedCourse ?? ''} onChange={(e) => setSelectedCourse(Number(e.target.value))}>
+            <option value="">선택</option>
+            {courses?.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label>과제명</label>
+          <input
+            value={assignmentForm.name}
+            onChange={(e) => setAssignmentForm({ ...assignmentForm, name: e.target.value })}
+            placeholder="예: HW1"
+          />
+        </div>
+        <div>
+          <label>가중치</label>
+          <input
+            type="number"
+            step="0.05"
+            value={assignmentForm.weight}
+            onChange={(e) => setAssignmentForm({ ...assignmentForm, weight: Number(e.target.value) })}
+          />
+        </div>
+        <div>
+          <label>만점</label>
+          <input
+            type="number"
+            value={assignmentForm.max_score}
+            onChange={(e) => setAssignmentForm({ ...assignmentForm, max_score: Number(e.target.value) })}
+          />
+        </div>
+        <button onClick={createAssignment}>과제 추가</button>
+      </div>
+
+      {assignments && assignments.length > 0 ? (
+        assignments.map((ass) => (
+          <div key={ass.id} className="card" style={{ marginBottom: 12 }}>
+            <div className="header">
+              <div>
+                <strong>{ass.name}</strong>
+                <div style={{ color: '#64748b', fontSize: 12 }}>
+                  weight {ass.weight}, max {ass.max_score}
+                </div>
+              </div>
+              <button className="secondary btn-compact" onClick={() => saveAssignmentScores(ass.id)}>
+                점수 저장
+              </button>
+            </div>
+            <div className="grid">
+              {(students || []).map((stu) => (
+                <div key={stu.id}>
+                  <label>{stu.full_name}</label>
+                  <input
+                    type="number"
+                    placeholder="점수"
+                    onChange={(e) => setScoreForm({ ...scoreForm, [stu.id]: Number(e.target.value) })}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        ))
+      ) : (
+        <small>과제가 없습니다. 강좌를 선택해 과제를 추가하세요.</small>
+      )}
+    </div>
+  );
+}
+
 export default function App() {
   const [tab, setTab] = useState<Tab>('dashboard');
   const [loggedIn, setLoggedIn] = useState(() => Boolean(localStorage.getItem('token')));
@@ -1040,6 +1139,7 @@ export default function App() {
         {tab === 'courses' && role === 'admin' && <CourseSection notify={pushToast} />}
         {tab === 'attendance' && <AttendanceSection notify={pushToast} />}
         {tab === 'grades' && <GradeSection notify={pushToast} />}
+        {tab === 'assignments' && <AssignmentSection notify={pushToast} />}
       </main>
       <ToastStack toasts={toasts} />
     </div>
