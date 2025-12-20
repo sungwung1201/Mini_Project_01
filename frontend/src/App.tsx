@@ -626,7 +626,15 @@ function CourseSection({ notify }: { notify: (type: Toast['type'], msg: string) 
       </div>
       {loading && <p>불러오는 중...</p>}
       {error && <p className="error-text">{error}</p>}
-      <CourseTable courses={courses || []} search={search} subjectFilter={subjectFilter} page={page} setPage={setPage} />
+      <CourseTable
+        courses={courses || []}
+        search={search}
+        subjectFilter={subjectFilter}
+        page={page}
+        setPage={setPage}
+        setData={setData}
+        notify={notify}
+      />
     </div>
   );
 }
@@ -637,12 +645,16 @@ function CourseTable({
   subjectFilter,
   page,
   setPage,
+  setData,
+  notify,
 }: {
   courses: Course[];
   search: string;
   subjectFilter: string;
   page: number;
   setPage: (p: number) => void;
+  setData: (fn: (prev: Course[] | null) => Course[] | null) => void;
+  notify: (type: Toast['type'], msg: string) => void;
 }) {
   const pageSize = 5;
   const filtered = courses.filter((c) => {
@@ -684,7 +696,14 @@ function CourseTable({
                     const class_name = prompt('학급', c.class_name || '') ?? c.class_name;
                     const teacher_name = prompt('담임/교사', c.teacher_name || '') ?? c.teacher_name;
                     await api.put(`/courses/${c.id}`, { name, subject, class_name, teacher_name });
-                    setPage(1);
+                    setData((prev) =>
+                      prev
+                        ? prev.map((item) =>
+                            item.id === c.id ? { ...item, name, subject, class_name, teacher_name } as Course : item
+                          )
+                        : prev
+                    );
+                    notify('success', '강좌가 수정되었습니다.');
                   }}
                 >
                   수정
@@ -694,7 +713,8 @@ function CourseTable({
                   onClick={async () => {
                     if (confirm('이 강좌를 삭제할까요?')) {
                       await api.delete(`/courses/${c.id}`);
-                      setPage(1);
+                      setData((prev) => (prev ? prev.filter((item) => item.id !== c.id) : prev));
+                      notify('success', '강좌가 삭제되었습니다.');
                     }
                   }}
                 >
