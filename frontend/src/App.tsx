@@ -21,6 +21,8 @@ const attendanceOptions = [
 ] as const;
 
 type Tab = 'dashboard' | 'students' | 'courses' | 'attendance' | 'grades';
+type Role = 'admin' | 'teacher';
+type Toast = { id: number; type: 'success' | 'error'; message: string };
 
 type LoadState<T> = {
   data: T | null;
@@ -95,14 +97,29 @@ function LoginCard({ onSuccess }: { onSuccess: () => void }) {
   );
 }
 
-function Sidebar({ tab, setTab, onLogout }: { tab: Tab; setTab: (t: Tab) => void; onLogout: () => void }) {
-  const items: { key: Tab; label: string }[] = [
+function Sidebar({
+  tab,
+  setTab,
+  onLogout,
+  role,
+  onRoleChange,
+}: {
+  tab: Tab;
+  setTab: (t: Tab) => void;
+  onLogout: () => void;
+  role: Role;
+  onRoleChange: (r: Role) => void;
+}) {
+  const baseItems: { key: Tab; label: string }[] = [
     { key: 'dashboard', label: '대시보드' },
-    { key: 'students', label: '학생 관리' },
-    { key: 'courses', label: '과정 관리' },
     { key: 'attendance', label: '출결 관리' },
     { key: 'grades', label: '성적 관리' },
   ];
+  const adminOnly: { key: Tab; label: string }[] = [
+    { key: 'students', label: '학생 관리' },
+    { key: 'courses', label: '과정 관리' },
+  ];
+  const items = role === 'admin' ? [...baseItems.slice(0, 1), ...adminOnly, ...baseItems.slice(1)] : baseItems;
 
   return (
     <aside className="sidebar">
@@ -123,8 +140,15 @@ function Sidebar({ tab, setTab, onLogout }: { tab: Tab; setTab: (t: Tab) => void
           <div className="avatar">S</div>
           <div>
             <div className="user-name">System Admin</div>
-            <div className="user-role">admin</div>
+            <div className="user-role">{role}</div>
           </div>
+        </div>
+        <div>
+          <label style={{ color: '#94a3b8', fontSize: 12 }}>역할</label>
+          <select value={role} onChange={(e) => onRoleChange(e.target.value as Role)}>
+            <option value="admin">admin</option>
+            <option value="teacher">teacher</option>
+          </select>
         </div>
         <button className="secondary" onClick={onLogout}>
           로그아웃
@@ -225,10 +249,10 @@ function DashboardSection({ go }: { go: (tab: Tab) => void }) {
             학생 등록
           </button>
           <button className="quick-card" onClick={() => go('attendance')}>
-            출결 입력
+            오늘 출결 입력
           </button>
           <button className="quick-card" onClick={() => go('grades')}>
-            성적 입력
+            새 평가 생성
           </button>
           <button className="quick-card" onClick={() => go('courses')}>
             과정/강좌 관리
@@ -303,7 +327,7 @@ function DashboardSection({ go }: { go: (tab: Tab) => void }) {
   );
 }
 
-function StudentSection() {
+function StudentSection({ notify }: { notify: (type: Toast['type'], msg: string) => void }) {
   const { data: students, loading, error, setData } = useLoad<Student[]>(async () => {
     const res = await api.get<Student[]>('/students');
     return res.data;
@@ -318,6 +342,7 @@ function StudentSection() {
     const res = await api.post<Student>('/students', form);
     setForm({ full_name: '', email: '', grade_level: '' });
     setData((prev) => (prev ? [res.data, ...prev] : [res.data]));
+    notify('success', '학생이 추가되었습니다.');
   };
 
   const filtered = (students || []).filter((s) => {
@@ -430,7 +455,7 @@ function StudentSection() {
   );
 }
 
-function CourseSection() {
+function CourseSection({ notify }: { notify: (type: Toast['type'], msg: string) => void }) {
   const { data: courses, loading, error, setData } = useLoad<Course[]>(async () => {
     const res = await api.get<Course[]>('/courses');
     return res.data;
@@ -447,12 +472,13 @@ function CourseSection() {
     const res = await api.post<Course>('/courses', form);
     setForm({ name: '', subject: '', class_name: '', teacher_name: '' });
     setData((prev) => (prev ? [res.data, ...prev] : [res.data]));
+    notify('success', '강좌가 추가되었습니다.');
   };
 
   const enroll = async () => {
     if (!selectedCourse || !enrollStudentId) return;
     await api.post(`/courses/${selectedCourse}/enrollments`, { student_id: enrollStudentId });
-    alert('수강 등록 완료');
+    notify('success', '수강 등록 완료');
   };
 
   return (
@@ -578,7 +604,7 @@ function CourseTable({
   );
 }
 
-function AttendanceSection() {
+function AttendanceSection({ notify }: { notify: (type: Toast['type'], msg: string) => void }) {
   const { data: courses } = useLoad<Course[]>(async () => (await api.get('/courses')).data, []);
   const [courseId, setCourseId] = useState<number | null>(null);
   const { data: sessions, setData: setSessions } = useLoad<Session[] | null>(
@@ -591,6 +617,22 @@ function AttendanceSection() {
   const [attendanceForm, setAttendanceForm] = useState<Record<string, AttendanceRecord['status']>>({});
   const [selectedSessionId, setSelectedSessionId] = useState<number | null>(null);
   const [summary, setSummary] = useState<AttendanceSummary | null>(null);
+  const exportAttendance = () => {
+    if (!summary) return notify('error', '요약이 없습니다.');
+    const rows = [
+      ['course_id', 'session_count', 'present', 'late', 'absent', 'excused'],
+      [summary.course_id, summary.session_count, summary.present, summary.late, summary.absent, summary.excused],
+    ];
+    const csv = rows.map((r) => r.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'attendance_summary.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    notify('success', '출결 요약 CSV를 다운로드했습니다.');
+  };
 
   const createSession = async () => {
     if (!courseId) return;
@@ -606,7 +648,7 @@ function AttendanceSection() {
       status,
     }));
     await api.post(`/sessions/${selectedSessionId}/attendance/bulk`, payload);
-    alert('출결 저장 완료');
+    notify('success', '출결 저장 완료');
   };
 
   const loadSummary = async () => {
@@ -710,7 +752,12 @@ function AttendanceSection() {
 
       {summary && (
         <div style={{ marginTop: 16 }}>
-          <strong>요약</strong>
+          <div className="header">
+            <strong>요약</strong>
+            <button className="secondary" onClick={exportAttendance}>
+              요약 CSV
+            </button>
+          </div>
           <div className="grid" style={{ marginTop: 8 }}>
             <div className="card">세션 수: {summary.session_count}</div>
             <div className="card">출석: {summary.present}</div>
@@ -724,7 +771,7 @@ function AttendanceSection() {
   );
 }
 
-function GradeSection() {
+function GradeSection({ notify }: { notify: (type: Toast['type'], msg: string) => void }) {
   const { data: students } = useLoad<Student[]>(async () => (await api.get('/students')).data, []);
   const { data: courses } = useLoad<Course[]>(async () => (await api.get('/courses')).data, []);
   const [selectedCourse, setSelectedCourse] = useState<number | null>(null);
@@ -737,11 +784,40 @@ function GradeSection() {
   const [scoreForm, setScoreForm] = useState<Record<string, number>>({});
   const [studentGrade, setStudentGrade] = useState<GradeSummary[] | null>(null);
   const [courseGrade, setCourseGrade] = useState<CourseGradeSummary | null>(null);
+  const exportCourseGrade = () => {
+    if (!courseGrade) return notify('error', '강좌 성적 요약이 없습니다.');
+    const header = ['course_id', 'course_name', 'average_score'];
+    const body = [courseGrade.course_id, courseGrade.course_name, courseGrade.average_score ?? ''];
+    const csv = [header.join(','), body.join(',')].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'course_grade_summary.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    notify('success', '강좌 성적 요약 CSV를 다운로드했습니다.');
+  };
+  const exportStudentGrades = () => {
+    if (!studentGrade) return notify('error', '학생 성적 데이터가 없습니다.');
+    const rows = [['course_id', 'course_name', 'weighted_score']];
+    studentGrade.forEach((g) => rows.push([g.course_id, g.course_name, g.weighted_score]));
+    const csv = rows.map((r) => r.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'student_grades.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    notify('success', '학생 성적 CSV를 다운로드했습니다.');
+  };
 
   const addAssessment = async () => {
     if (!selectedCourse) return;
     const res = await api.post<Assessment>(`/courses/${selectedCourse}/assessments`, assessmentForm);
     setAssessments((prev) => (prev ? [res.data, ...prev] : [res.data]));
+    notify('success', '평가가 추가되었습니다.');
   };
 
   const saveScores = async (assessmentId: number) => {
@@ -750,7 +826,7 @@ function GradeSection() {
       raw_score,
     }));
     await api.post(`/assessments/${assessmentId}/scores/bulk`, payload);
-    alert('점수 저장 완료');
+    notify('success', '점수 저장 완료');
   };
 
   const loadStudentGrade = async () => {
@@ -855,6 +931,12 @@ function GradeSection() {
         <button className="secondary" onClick={loadCourseGrade}>
           강좌 성적 요약 보기
         </button>
+        <button className="secondary" onClick={exportCourseGrade} disabled={!courseGrade}>
+          강좌 성적 CSV
+        </button>
+        <button className="secondary" onClick={exportStudentGrades} disabled={!studentGrade}>
+          학생 성적 CSV
+        </button>
       </div>
 
       {studentGrade && (
@@ -914,6 +996,13 @@ function GradeSection() {
 export default function App() {
   const [tab, setTab] = useState<Tab>('dashboard');
   const [loggedIn, setLoggedIn] = useState(() => Boolean(localStorage.getItem('token')));
+  const [role, setRole] = useState<Role>('admin');
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const pushToast = (type: Toast['type'], message: string) => {
+    const id = Date.now() + Math.random();
+    setToasts((prev) => [...prev, { id, type, message }]);
+    setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 3200);
+  };
 
   const logout = () => {
     localStorage.removeItem('token');
@@ -926,14 +1015,27 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      <Sidebar tab={tab} setTab={setTab} onLogout={logout} />
+      <Sidebar tab={tab} setTab={setTab} onLogout={logout} role={role} onRoleChange={setRole} />
       <main className="main">
         {tab === 'dashboard' && <DashboardSection go={setTab} />}
-        {tab === 'students' && <StudentSection />}
-        {tab === 'courses' && <CourseSection />}
-        {tab === 'attendance' && <AttendanceSection />}
-        {tab === 'grades' && <GradeSection />}
+        {tab === 'students' && role === 'admin' && <StudentSection notify={pushToast} />}
+        {tab === 'courses' && role === 'admin' && <CourseSection notify={pushToast} />}
+        {tab === 'attendance' && <AttendanceSection notify={pushToast} />}
+        {tab === 'grades' && <GradeSection notify={pushToast} />}
       </main>
+      <ToastStack toasts={toasts} />
+    </div>
+  );
+}
+
+function ToastStack({ toasts }: { toasts: Toast[] }) {
+  return (
+    <div className="toast-stack">
+      {toasts.map((t) => (
+        <div key={t.id} className={`toast ${t.type}`}>
+          {t.message}
+        </div>
+      ))}
     </div>
   );
 }
