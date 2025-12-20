@@ -20,7 +20,7 @@ const attendanceOptions = [
   { value: 'excused', label: '공결' },
 ] as const;
 
-type Tab = 'students' | 'courses' | 'attendance' | 'grades';
+type Tab = 'dashboard' | 'students' | 'courses' | 'attendance' | 'grades';
 
 type LoadState<T> = {
   data: T | null;
@@ -95,35 +95,172 @@ function LoginCard({ onSuccess }: { onSuccess: () => void }) {
   );
 }
 
-function Header({ tab, setTab, onLogout }: { tab: Tab; setTab: (t: Tab) => void; onLogout: () => void }) {
+function Sidebar({ tab, setTab, onLogout }: { tab: Tab; setTab: (t: Tab) => void; onLogout: () => void }) {
+  const items: { key: Tab; label: string }[] = [
+    { key: 'dashboard', label: '대시보드' },
+    { key: 'students', label: '학생 관리' },
+    { key: 'courses', label: '과정 관리' },
+    { key: 'attendance', label: '출결 관리' },
+    { key: 'grades', label: '성적 관리' },
+  ];
+
   return (
-    <div className="header">
-      <div>
-        <h1 style={{ margin: 0 }}>학생 출결·성적 관리</h1>
-        <small>로그인 후 사용 가능합니다</small>
-      </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-        <div className="tabs">
-          {(
-            [
-              { key: 'students', label: '학생' },
-              { key: 'courses', label: '강좌' },
-              { key: 'attendance', label: '출결' },
-              { key: 'grades', label: '성적' },
-            ] as const
-          ).map((item) => (
-            <div
-              key={item.key}
-              className={`tab ${tab === item.key ? 'active' : ''}`}
-              onClick={() => setTab(item.key)}
-            >
-              {item.label}
-            </div>
-          ))}
+    <aside className="sidebar">
+      <div className="brand">Grade Management</div>
+      <nav className="nav">
+        {items.map((item) => (
+          <button
+            key={item.key}
+            className={`nav-item ${tab === item.key ? 'active' : ''}`}
+            onClick={() => setTab(item.key)}
+          >
+            {item.label}
+          </button>
+        ))}
+      </nav>
+      <div className="sidebar-footer">
+        <div className="user">
+          <div className="avatar">S</div>
+          <div>
+            <div className="user-name">System Admin</div>
+            <div className="user-role">admin</div>
+          </div>
         </div>
         <button className="secondary" onClick={onLogout}>
           로그아웃
         </button>
+      </div>
+    </aside>
+  );
+}
+
+function DashboardSection({ go }: { go: (tab: Tab) => void }) {
+  const { data: students } = useLoad<Student[]>(async () => (await api.get('/students')).data, []);
+  const { data: courses } = useLoad<Course[]>(async () => (await api.get('/courses')).data, []);
+  const [attendanceSummary, setAttendanceSummary] = useState<AttendanceSummary | null>(null);
+  const [courseGrade, setCourseGrade] = useState<CourseGradeSummary | null>(null);
+  const firstCourseId = courses?.[0]?.id;
+
+  useEffect(() => {
+    if (!firstCourseId) {
+      setAttendanceSummary(null);
+      setCourseGrade(null);
+      return;
+    }
+    api
+      .get<AttendanceSummary>(`/courses/${firstCourseId}/attendance/summary`)
+      .then((res) => setAttendanceSummary(res.data))
+      .catch(() => setAttendanceSummary(null));
+    api
+      .get<CourseGradeSummary>(`/courses/${firstCourseId}/grades/summary`)
+      .then((res) => setCourseGrade(res.data))
+      .catch(() => setCourseGrade(null));
+  }, [firstCourseId]);
+
+  const totalStudents = students?.length ?? 0;
+  const totalCourses = courses?.length ?? 0;
+  const recentStudents = students?.slice(0, 4) ?? [];
+  const recentCourses = courses?.slice(0, 4) ?? [];
+
+  return (
+    <div className="dashboard">
+      <div className="hero">
+        <div>
+          <p className="eyebrow">안녕하세요, System Admin님!</p>
+          <h1>오늘의 학사 현황을 확인하세요.</h1>
+        </div>
+        <div className="hero-actions">
+          <button className="secondary" onClick={() => go('students')}>
+            학생 등록
+          </button>
+          <button onClick={() => go('attendance')}>출결 입력</button>
+        </div>
+      </div>
+
+      <div className="stats-grid">
+        <div className="stat-card">
+          <div className="stat-label">총 학생 수</div>
+          <div className="stat-value">{totalStudents}</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-label">진행 중인 과정</div>
+          <div className="stat-value">{totalCourses}</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-label">출석률</div>
+          <div className="stat-value">
+            {attendanceSummary && attendanceSummary.session_count > 0
+              ? `${Math.round(
+                  (attendanceSummary.present / Math.max(attendanceSummary.present + attendanceSummary.absent + attendanceSummary.late + attendanceSummary.excused, 1)) * 100,
+                )}%`
+              : '-'}
+          </div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-label">평균 성적</div>
+          <div className="stat-value">{courseGrade?.average_score ?? '-'}</div>
+        </div>
+      </div>
+
+      <div className="quick-actions">
+        <div className="quick-title">빠른 작업</div>
+        <div className="quick-grid">
+          <button className="quick-card" onClick={() => go('students')}>
+            학생 등록
+          </button>
+          <button className="quick-card" onClick={() => go('attendance')}>
+            출결 입력
+          </button>
+          <button className="quick-card" onClick={() => go('grades')}>
+            성적 입력
+          </button>
+          <button className="quick-card" onClick={() => go('courses')}>
+            과정/강좌 관리
+          </button>
+        </div>
+      </div>
+
+      <div className="grid">
+        <div className="card">
+          <div className="header">
+            <h3 style={{ margin: 0 }}>최근 등록 학생</h3>
+          </div>
+          {recentStudents.length === 0 ? (
+            <small>학생 데이터가 없습니다.</small>
+          ) : (
+            <ul className="list">
+              {recentStudents.map((s) => (
+                <li key={s.id} className="list-item">
+                  <div>
+                    <div className="list-title">{s.full_name}</div>
+                    <div className="list-sub">{s.email || '-'}</div>
+                  </div>
+                  <span className="badge">#{s.id}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <div className="card">
+          <div className="header">
+            <h3 style={{ margin: 0 }}>최근 과정</h3>
+          </div>
+          {recentCourses.length === 0 ? (
+            <small>과정 데이터가 없습니다.</small>
+          ) : (
+            <ul className="list">
+              {recentCourses.map((c) => (
+                <li key={c.id} className="list-item">
+                  <div>
+                    <div className="list-title">{c.name}</div>
+                    <div className="list-sub">{c.teacher_name || '-'}</div>
+                  </div>
+                  <span className="badge">#{c.id}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -626,7 +763,7 @@ function GradeSection() {
 }
 
 export default function App() {
-  const [tab, setTab] = useState<Tab>('students');
+  const [tab, setTab] = useState<Tab>('dashboard');
   const [loggedIn, setLoggedIn] = useState(() => Boolean(localStorage.getItem('token')));
 
   const logout = () => {
@@ -639,14 +776,15 @@ export default function App() {
   }
 
   return (
-    <div className="container">
-      <Header tab={tab} setTab={setTab} onLogout={logout} />
-      <div className="grid">
+    <div className="app-shell">
+      <Sidebar tab={tab} setTab={setTab} onLogout={logout} />
+      <main className="main">
+        {tab === 'dashboard' && <DashboardSection go={setTab} />}
         {tab === 'students' && <StudentSection />}
         {tab === 'courses' && <CourseSection />}
         {tab === 'attendance' && <AttendanceSection />}
         {tab === 'grades' && <GradeSection />}
-      </div>
+      </main>
     </div>
   );
 }
