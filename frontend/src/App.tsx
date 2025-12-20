@@ -1084,9 +1084,11 @@ function AssignmentSection({ notify }: { notify: (type: Toast['type'], msg: stri
             onChange={(e) => setAssignmentForm({ ...assignmentForm, max_score: Number(e.target.value) })}
           />
         </div>
-        <button className="btn-slim" onClick={createAssignment}>
-          과제 추가
-        </button>
+        <div className="action-cell">
+          <button className="btn-slim" style={{ minWidth: 120 }} onClick={createAssignment}>
+            과제 추가
+          </button>
+        </div>
       </div>
 
       {assignments && assignments.length > 0 ? (
