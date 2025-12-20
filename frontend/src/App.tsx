@@ -367,6 +367,8 @@ function StudentSection({ notify }: { notify: (type: Toast['type'], msg: string)
     return res.data;
   }, []);
   const [form, setForm] = useState({ full_name: '', email: '', grade_level: '' });
+  const [editingStudent, setEditingStudent] = useState<Student | null>(null);
+  const [editStudentForm, setEditStudentForm] = useState({ full_name: '', email: '', grade_level: '' });
   const [search, setSearch] = useState('');
   const [gradeFilter, setGradeFilter] = useState('');
   const [page, setPage] = useState(1);
@@ -491,33 +493,57 @@ function StudentSection({ notify }: { notify: (type: Toast['type'], msg: string)
               <td>{s.email}</td>
               <td>{s.grade_level}</td>
               <td>
-                <button
-                  className="btn-compact"
-                  onClick={async () => {
-                    const full_name = prompt('이름', s.full_name) ?? s.full_name;
-                    const email = prompt('이메일', s.email || '') ?? s.email;
-                    const grade_level = prompt('학년/반', s.grade_level || '') ?? s.grade_level;
-                    await api.put(`/students/${s.id}`, { full_name, email, grade_level });
-                    setData((prev) =>
-                      prev
-                        ? prev.map((st) => (st.id === s.id ? { ...st, full_name, email, grade_level } as Student : st))
-                        : prev
-                    );
-                  }}
-                >
-                  수정
-                </button>
-                <button
-                  className="secondary btn-compact"
-                  onClick={async () => {
-                    if (confirm('이 학생을 삭제할까요?')) {
-                      await api.delete(`/students/${s.id}`);
-                      setData((prev) => (prev ? prev.filter((st) => st.id !== s.id) : prev));
-                    }
-                  }}
-                >
-                  삭제
-                </button>
+                {editingStudent?.id === s.id ? (
+                  <div className="action-row">
+                    <button
+                      className="btn-compact"
+                      onClick={async () => {
+                        const payload = {
+                          full_name: editStudentForm.full_name || s.full_name,
+                          email: editStudentForm.email || null,
+                          grade_level: editStudentForm.grade_level || null,
+                        };
+                        await api.put(`/students/${s.id}`, payload);
+                        setData((prev) =>
+                          prev ? prev.map((st) => (st.id === s.id ? { ...st, ...payload } as Student : st)) : prev
+                        );
+                        setEditingStudent(null);
+                      }}
+                    >
+                      저장
+                    </button>
+                    <button className="secondary btn-compact" onClick={() => setEditingStudent(null)}>
+                      취소
+                    </button>
+                  </div>
+                ) : (
+                  <div className="action-row">
+                    <button
+                      className="btn-compact"
+                      onClick={() => {
+                        setEditingStudent(s);
+                        setEditStudentForm({
+                          full_name: s.full_name,
+                          email: s.email || '',
+                          grade_level: s.grade_level || '',
+                        });
+                      }}
+                    >
+                      수정
+                    </button>
+                    <button
+                      className="secondary btn-compact"
+                      onClick={async () => {
+                        if (confirm('이 학생을 삭제할까요?')) {
+                          await api.delete(`/students/${s.id}`);
+                          setData((prev) => (prev ? prev.filter((st) => st.id !== s.id) : prev));
+                        }
+                      }}
+                    >
+                      삭제
+                    </button>
+                  </div>
+                )}
               </td>
             </tr>
           ))}
@@ -656,6 +682,13 @@ function CourseTable({
   setData: (fn: (prev: Course[] | null) => Course[] | null) => void;
   notify: (type: Toast['type'], msg: string) => void;
 }) {
+  const [editingCourse, setEditingCourse] = useState<Course | null>(null);
+  const [editCourseForm, setEditCourseForm] = useState({
+    name: '',
+    subject: '',
+    class_name: '',
+    teacher_name: '',
+  });
   const pageSize = 5;
   const filtered = courses.filter((c) => {
     const text = [c.name, c.subject, c.teacher_name].join(' ').toLowerCase();
@@ -683,43 +716,104 @@ function CourseTable({
           {pageData.map((c) => (
             <tr key={c.id}>
               <td>{c.id}</td>
-              <td>{c.name}</td>
-              <td>{c.subject}</td>
-              <td>{c.class_name}</td>
-              <td>{c.teacher_name}</td>
               <td>
-                <button
-                  className="btn-compact"
-                  onClick={async () => {
-                    const name = prompt('강좌명', c.name) ?? c.name;
-                    const subject = prompt('과목', c.subject || '') ?? c.subject;
-                    const class_name = prompt('학급', c.class_name || '') ?? c.class_name;
-                    const teacher_name = prompt('담임/교사', c.teacher_name || '') ?? c.teacher_name;
-                    await api.put(`/courses/${c.id}`, { name, subject, class_name, teacher_name });
-                    setData((prev) =>
-                      prev
-                        ? prev.map((item) =>
-                            item.id === c.id ? { ...item, name, subject, class_name, teacher_name } as Course : item
-                          )
-                        : prev
-                    );
-                    notify('success', '강좌가 수정되었습니다.');
-                  }}
-                >
-                  수정
-                </button>
-                <button
-                  className="secondary btn-compact"
-                  onClick={async () => {
-                    if (confirm('이 강좌를 삭제할까요?')) {
-                      await api.delete(`/courses/${c.id}`);
-                      setData((prev) => (prev ? prev.filter((item) => item.id !== c.id) : prev));
-                      notify('success', '강좌가 삭제되었습니다.');
-                    }
-                  }}
-                >
-                  삭제
-                </button>
+                {editingCourse?.id === c.id ? (
+                  <input
+                    value={editCourseForm.name}
+                    onChange={(e) => setEditCourseForm((f) => ({ ...f, name: e.target.value }))}
+                  />
+                ) : (
+                  c.name
+                )}
+              </td>
+              <td>
+                {editingCourse?.id === c.id ? (
+                  <input
+                    value={editCourseForm.subject}
+                    onChange={(e) => setEditCourseForm((f) => ({ ...f, subject: e.target.value }))}
+                  />
+                ) : (
+                  c.subject
+                )}
+              </td>
+              <td>
+                {editingCourse?.id === c.id ? (
+                  <input
+                    value={editCourseForm.class_name}
+                    onChange={(e) => setEditCourseForm((f) => ({ ...f, class_name: e.target.value }))}
+                  />
+                ) : (
+                  c.class_name
+                )}
+              </td>
+              <td>
+                {editingCourse?.id === c.id ? (
+                  <input
+                    value={editCourseForm.teacher_name}
+                    onChange={(e) => setEditCourseForm((f) => ({ ...f, teacher_name: e.target.value }))}
+                  />
+                ) : (
+                  c.teacher_name
+                )}
+              </td>
+              <td>
+                {editingCourse?.id === c.id ? (
+                  <div className="action-row">
+                    <button
+                      className="btn-compact"
+                      onClick={async () => {
+                        const payload = {
+                          name: editCourseForm.name || c.name,
+                          subject: editCourseForm.subject || null,
+                          class_name: editCourseForm.class_name || null,
+                          teacher_name: editCourseForm.teacher_name || null,
+                        };
+                        await api.put(`/courses/${c.id}`, payload);
+                        setData((prev) =>
+                          prev
+                            ? prev.map((item) => (item.id === c.id ? { ...item, ...payload } as Course : item))
+                            : prev
+                        );
+                        setEditingCourse(null);
+                        notify('success', '강좌가 수정되었습니다.');
+                      }}
+                    >
+                      저장
+                    </button>
+                    <button className="secondary btn-compact" onClick={() => setEditingCourse(null)}>
+                      취소
+                    </button>
+                  </div>
+                ) : (
+                  <div className="action-row">
+                    <button
+                      className="btn-compact"
+                      onClick={() => {
+                        setEditingCourse(c);
+                        setEditCourseForm({
+                          name: c.name,
+                          subject: c.subject || '',
+                          class_name: c.class_name || '',
+                          teacher_name: c.teacher_name || '',
+                        });
+                      }}
+                    >
+                      수정
+                    </button>
+                    <button
+                      className="secondary btn-compact"
+                      onClick={async () => {
+                        if (confirm('이 강좌를 삭제할까요?')) {
+                          await api.delete(`/courses/${c.id}`);
+                          setData((prev) => (prev ? prev.filter((item) => item.id !== c.id) : prev));
+                          notify('success', '강좌가 삭제되었습니다.');
+                        }
+                      }}
+                    >
+                      삭제
+                    </button>
+                  </div>
+                )}
               </td>
             </tr>
           ))}
