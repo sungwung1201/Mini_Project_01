@@ -364,10 +364,19 @@ function StudentSection({ notify }: { notify: (type: Toast['type'], msg: string)
   const pageSize = 5;
 
   const addStudent = async () => {
-    const res = await api.post<Student>('/students', form);
-    setForm({ full_name: '', email: '', grade_level: '' });
-    setData((prev) => (prev ? [res.data, ...prev] : [res.data]));
-    notify('success', '학생이 추가되었습니다.');
+    if (!form.full_name.trim()) {
+      notify('error', '이름은 필수입니다.');
+      return;
+    }
+    try {
+      const res = await api.post<Student>('/students', form);
+      setForm({ full_name: '', email: '', grade_level: '' });
+      setData((prev) => (prev ? [res.data, ...prev] : [res.data]));
+      notify('success', '학생이 추가되었습니다.');
+    } catch (e: any) {
+      const msg = e?.response?.data?.detail || e?.message || '학생 추가 중 오류가 발생했습니다.';
+      notify('error', msg);
+    }
   };
 
   const filtered = (students || []).filter((s) => {
