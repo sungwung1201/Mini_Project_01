@@ -206,21 +206,21 @@ function DashboardSection({ go }: { go: (tab: Tab) => void }) {
 
       <div className="stats-grid">
         <div className="stat-card">
-          <div className="stat-icon">👥</div>
+          <div className="stat-icon purple">👥</div>
           <div>
             <div className="stat-label">총 학생 수</div>
             <div className="stat-value">{totalStudents}</div>
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon">📚</div>
+          <div className="stat-icon teal">📖</div>
           <div>
             <div className="stat-label">진행 중인 과정</div>
             <div className="stat-value">{totalCourses}</div>
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon">✅</div>
+          <div className="stat-icon green">✅</div>
           <div>
             <div className="stat-label">출석률</div>
             <div className="stat-value">
@@ -235,7 +235,7 @@ function DashboardSection({ go }: { go: (tab: Tab) => void }) {
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon">📈</div>
+          <div className="stat-icon orange">📈</div>
           <div>
             <div className="stat-label">평균 성적</div>
             <div className="stat-value">{courseGrade?.average_score ?? '-'}</div>

@@ -123,11 +123,14 @@ a { color: inherit; text-decoration: none; }
   width: 38px;
   height: 38px;
   border-radius: 12px;
-  background: rgba(56, 189, 248, 0.12);
   display: grid;
   place-items: center;
   font-size: 18px;
 }
+.stat-icon.purple { background: #5b5be7; }
+.stat-icon.teal { background: #1abc9c; }
+.stat-icon.green { background: #22c55e; }
+.stat-icon.orange { background: #f97316; }
 
 .quick-actions { background: #0f172a; border: 1px solid rgba(148, 163, 184, 0.12); border-radius: 14px; padding: 14px; }
 .quick-title { font-weight: 700; margin-bottom: 10px; }
