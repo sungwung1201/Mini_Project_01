@@ -374,7 +374,13 @@ function StudentSection({ notify }: { notify: (type: Toast['type'], msg: string)
       setData((prev) => (prev ? [res.data, ...prev] : [res.data]));
       notify('success', '학생이 추가되었습니다.');
     } catch (e: any) {
-      const msg = e?.response?.data?.detail || e?.message || '학생 추가 중 오류가 발생했습니다.';
+      const detail = e?.response?.data?.detail;
+      const msg =
+        typeof detail === 'string'
+          ? detail
+          : Array.isArray(detail)
+            ? detail.map((d: any) => d?.msg || JSON.stringify(d)).join(', ')
+            : detail?.msg || e?.message || '학생 추가 중 오류가 발생했습니다.';
       notify('error', msg);
     }
   };
