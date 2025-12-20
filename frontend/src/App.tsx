@@ -369,7 +369,13 @@ function StudentSection({ notify }: { notify: (type: Toast['type'], msg: string)
       return;
     }
     try {
-      const res = await api.post<Student>('/students', form);
+      const payload: Partial<Student> & { full_name: string } = {
+        full_name: form.full_name.trim(),
+      };
+      if (form.email.trim()) payload.email = form.email.trim();
+      if (form.grade_level.trim()) payload.grade_level = form.grade_level.trim();
+
+      const res = await api.post<Student>('/students', payload);
       setForm({ full_name: '', email: '', grade_level: '' });
       setData((prev) => (prev ? [res.data, ...prev] : [res.data]));
       notify('success', '학생이 추가되었습니다.');
