@@ -672,7 +672,7 @@ function AttendanceSection({ notify }: { notify: (type: Toast['type'], msg: stri
   return (
     <div className="card">
       <h2 className="section-title">출결</h2>
-      <div className="form-row">
+      <div className="form-row tight">
         <div>
           <label>강좌 선택</label>
           <select value={courseId ?? ''} onChange={(e) => setCourseId(Number(e.target.value))}>
@@ -700,10 +700,14 @@ function AttendanceSection({ notify }: { notify: (type: Toast['type'], msg: stri
             placeholder="예: 3단원"
           />
         </div>
-        <button onClick={createSession}>회차 추가</button>
+        <div className="action-cell">
+          <button className="btn-slim" style={{ minWidth: 120 }} onClick={createSession}>
+            회차 추가
+          </button>
+        </div>
       </div>
 
-      <div className="form-row">
+      <div className="form-row tight">
         <div>
           <label>회차 선택</label>
           <select
@@ -718,9 +722,11 @@ function AttendanceSection({ notify }: { notify: (type: Toast['type'], msg: stri
             ))}
           </select>
         </div>
-        <button className="secondary btn-slim" onClick={loadSummary}>
-          출결 요약 보기
-        </button>
+        <div className="action-cell">
+          <button className="secondary btn-slim" style={{ minWidth: 140 }} onClick={loadSummary}>
+            출결 요약 보기
+          </button>
+        </div>
       </div>
 
       {selectedSessionId && (
