@@ -257,6 +257,9 @@ function DashboardSection({ go }: { go: (tab: Tab) => void }) {
           <button className="quick-card" onClick={() => go('courses')}>
             과정/강좌 관리
           </button>
+          <button className="quick-card" onClick={() => go('grades')}>
+            과제 관리 (준비)
+          </button>
         </div>
       </div>
 
@@ -322,6 +325,17 @@ function DashboardSection({ go }: { go: (tab: Tab) => void }) {
             </div>
           </li>
         </ul>
+      </div>
+
+      <div className="card">
+        <div className="header">
+          <h3 style={{ margin: 0 }}>과제 관리</h3>
+          <span className="badge">준비중</span>
+        </div>
+        <p className="muted">
+          과제 생성/제출/채점 기능은 곧 추가 예정입니다. 현재는 성적 탭에서 시험/과제 점수를 입력해 관리하고, 추후 전용 과제
+          관리 화면에 연결할 계획입니다.
+        </p>
       </div>
     </div>
   );
@@ -706,7 +720,7 @@ function AttendanceSection({ notify }: { notify: (type: Toast['type'], msg: stri
             ))}
           </select>
         </div>
-        <button className="secondary" onClick={loadSummary}>
+        <button className="secondary btn-compact" onClick={loadSummary}>
           출결 요약 보기
         </button>
       </div>
@@ -746,7 +760,9 @@ function AttendanceSection({ notify }: { notify: (type: Toast['type'], msg: stri
 
       {selectedSessionId && (
         <div style={{ marginTop: 12 }}>
-          <button onClick={saveAttendance}>출결 저장</button>
+          <button className="btn-compact" onClick={saveAttendance}>
+            출결 저장
+          </button>
         </div>
       )}
 
@@ -894,7 +910,7 @@ function GradeSection({ notify }: { notify: (type: Toast['type'], msg: string) =
                     weight {ass.weight}, max {ass.max_score}
                   </div>
                 </div>
-                <button className="secondary" onClick={() => saveScores(ass.id)}>
+                <button className="secondary btn-compact" onClick={() => saveScores(ass.id)}>
                   점수 저장
                 </button>
               </div>
@@ -927,14 +943,16 @@ function GradeSection({ notify }: { notify: (type: Toast['type'], msg: string) =
             ))}
           </select>
         </div>
-        <button onClick={loadStudentGrade}>학생 성적 보기</button>
-        <button className="secondary" onClick={loadCourseGrade}>
+        <button className="btn-compact" onClick={loadStudentGrade}>
+          학생 성적 보기
+        </button>
+        <button className="secondary btn-compact" onClick={loadCourseGrade}>
           강좌 성적 요약 보기
         </button>
-        <button className="secondary" onClick={exportCourseGrade} disabled={!courseGrade}>
+        <button className="secondary btn-compact" onClick={exportCourseGrade} disabled={!courseGrade}>
           강좌 성적 CSV
         </button>
-        <button className="secondary" onClick={exportStudentGrades} disabled={!studentGrade}>
+        <button className="secondary btn-compact" onClick={exportStudentGrades} disabled={!studentGrade}>
           학생 성적 CSV
         </button>
       </div>

@@ -173,6 +173,11 @@ a { color: inherit; text-decoration: none; }
 .toast.success { border-color: #22c55e; }
 .toast.error { border-color: #ef4444; }
 
+.btn-compact {
+  padding: 8px 10px;
+  font-size: 14px;
+}
+
 input, select, button, textarea { font: inherit; }
 
 button {
