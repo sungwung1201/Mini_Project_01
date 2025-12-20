@@ -137,25 +137,26 @@ function Sidebar({ tab, setTab, onLogout }: { tab: Tab; setTab: (t: Tab) => void
 function DashboardSection({ go }: { go: (tab: Tab) => void }) {
   const { data: students } = useLoad<Student[]>(async () => (await api.get('/students')).data, []);
   const { data: courses } = useLoad<Course[]>(async () => (await api.get('/courses')).data, []);
+  const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
   const [attendanceSummary, setAttendanceSummary] = useState<AttendanceSummary | null>(null);
   const [courseGrade, setCourseGrade] = useState<CourseGradeSummary | null>(null);
-  const firstCourseId = courses?.[0]?.id;
+  const courseId = selectedCourseId ?? courses?.[0]?.id;
 
   useEffect(() => {
-    if (!firstCourseId) {
+    if (!courseId) {
       setAttendanceSummary(null);
       setCourseGrade(null);
       return;
     }
     api
-      .get<AttendanceSummary>(`/courses/${firstCourseId}/attendance/summary`)
+      .get<AttendanceSummary>(`/courses/${courseId}/attendance/summary`)
       .then((res) => setAttendanceSummary(res.data))
       .catch(() => setAttendanceSummary(null));
     api
-      .get<CourseGradeSummary>(`/courses/${firstCourseId}/grades/summary`)
+      .get<CourseGradeSummary>(`/courses/${courseId}/grades/summary`)
       .then((res) => setCourseGrade(res.data))
       .catch(() => setCourseGrade(null));
-  }, [firstCourseId]);
+  }, [courseId]);
 
   const totalStudents = students?.length ?? 0;
   const totalCourses = courses?.length ?? 0;
@@ -204,6 +205,21 @@ function DashboardSection({ go }: { go: (tab: Tab) => void }) {
 
       <div className="quick-actions">
         <div className="quick-title">빠른 작업</div>
+        <div style={{ marginBottom: 8, display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+          <label style={{ color: '#94a3b8', fontWeight: 600 }}>과정 선택</label>
+          <select
+            value={courseId ?? ''}
+            onChange={(e) => setSelectedCourseId(Number(e.target.value) || null)}
+            style={{ maxWidth: 260 }}
+          >
+            <option value="">전체</option>
+            {courses?.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </div>
         <div className="quick-grid">
           <button className="quick-card" onClick={() => go('students')}>
             학생 등록
@@ -262,6 +278,27 @@ function DashboardSection({ go }: { go: (tab: Tab) => void }) {
           )}
         </div>
       </div>
+
+      <div className="card">
+        <div className="header">
+          <h3 style={{ margin: 0 }}>최근 알림</h3>
+          <span className="badge">베타</span>
+        </div>
+        <ul className="list">
+          <li className="list-item">
+            <div>
+              <div className="list-title">지각/결석 알림</div>
+              <div className="list-sub">추후 출석 기록에서 자동 생성 예정</div>
+            </div>
+          </li>
+          <li className="list-item">
+            <div>
+              <div className="list-title">성적 입력 알림</div>
+              <div className="list-sub">평가 점수 입력 시 표시 예정</div>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
   );
 }
@@ -272,6 +309,10 @@ function StudentSection() {
     return res.data;
   }, []);
   const [form, setForm] = useState({ full_name: '', email: '', grade_level: '' });
+  const [search, setSearch] = useState('');
+  const [gradeFilter, setGradeFilter] = useState('');
+  const [page, setPage] = useState(1);
+  const pageSize = 5;
 
   const addStudent = async () => {
     const res = await api.post<Student>('/students', form);
@@ -279,9 +320,48 @@ function StudentSection() {
     setData((prev) => (prev ? [res.data, ...prev] : [res.data]));
   };
 
+  const filtered = (students || []).filter((s) => {
+    const matchText =
+      s.full_name.toLowerCase().includes(search.toLowerCase()) ||
+      (s.email || '').toLowerCase().includes(search.toLowerCase());
+    const matchGrade = gradeFilter ? (s.grade_level || '').includes(gradeFilter) : true;
+    return matchText && matchGrade;
+  });
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const pageData = filtered.slice((page - 1) * pageSize, page * pageSize);
+
+  const exportCSV = () => {
+    const rows = [['id', 'name', 'email', 'grade']].concat(
+      (students || []).map((s) => [s.id, s.full_name, s.email || '', s.grade_level || ''])
+    );
+    const csv = rows.map((r) => r.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'students.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="card">
-      <h2 className="section-title">학생</h2>
+      <div className="header">
+        <h2 className="section-title">학생</h2>
+        <button className="secondary" onClick={exportCSV}>
+          CSV 다운로드
+        </button>
+      </div>
+      <div className="form-row">
+        <div>
+          <label>검색 (이름/이메일)</label>
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="예: 홍길동 또는 email" />
+        </div>
+        <div>
+          <label>학년/반 필터</label>
+          <input value={gradeFilter} onChange={(e) => setGradeFilter(e.target.value)} placeholder="예: 2-B" />
+        </div>
+      </div>
       <div className="form-row">
         <div>
           <label>이름</label>
@@ -321,7 +401,7 @@ function StudentSection() {
           </tr>
         </thead>
         <tbody>
-          {students?.map((s) => (
+          {pageData.map((s) => (
             <tr key={s.id}>
               <td>{s.id}</td>
               <td>{s.full_name}</td>
@@ -331,6 +411,21 @@ function StudentSection() {
           ))}
         </tbody>
       </table>
+      <div className="pagination">
+        <button className="secondary" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
+          이전
+        </button>
+        <span>
+          {page} / {totalPages}
+        </span>
+        <button
+          className="secondary"
+          onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+          disabled={page === totalPages}
+        >
+          다음
+        </button>
+      </div>
     </div>
   );
 }
@@ -344,6 +439,9 @@ function CourseSection() {
   const [form, setForm] = useState({ name: '', subject: '', class_name: '', teacher_name: '' });
   const [selectedCourse, setSelectedCourse] = useState<number | null>(null);
   const [enrollStudentId, setEnrollStudentId] = useState<number | null>(null);
+  const [search, setSearch] = useState('');
+  const [subjectFilter, setSubjectFilter] = useState('');
+  const [page, setPage] = useState(1);
 
   const addCourse = async () => {
     const res = await api.post<Course>('/courses', form);
@@ -379,6 +477,16 @@ function CourseSection() {
         </div>
       </div>
       <button onClick={addCourse}>강좌 추가</button>
+      <div className="form-row" style={{ marginTop: 12 }}>
+        <div>
+          <label>검색 (강좌/과목/교사)</label>
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="예: Math, 영어, Lee" />
+        </div>
+        <div>
+          <label>과목 필터</label>
+          <input value={subjectFilter} onChange={(e) => setSubjectFilter(e.target.value)} placeholder="예: Math" />
+        </div>
+      </div>
       <div style={{ marginTop: 16, display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
         <strong>수강 등록</strong>
         <select value={selectedCourse ?? ''} onChange={(e) => setSelectedCourse(Number(e.target.value))}>
@@ -403,6 +511,36 @@ function CourseSection() {
       </div>
       {loading && <p>불러오는 중...</p>}
       {error && <p className="error-text">{error}</p>}
+      <CourseTable courses={courses || []} search={search} subjectFilter={subjectFilter} page={page} setPage={setPage} />
+    </div>
+  );
+}
+
+function CourseTable({
+  courses,
+  search,
+  subjectFilter,
+  page,
+  setPage,
+}: {
+  courses: Course[];
+  search: string;
+  subjectFilter: string;
+  page: number;
+  setPage: (p: number) => void;
+}) {
+  const pageSize = 5;
+  const filtered = courses.filter((c) => {
+    const text = [c.name, c.subject, c.teacher_name].join(' ').toLowerCase();
+    const matchText = text.includes(search.toLowerCase());
+    const matchSubject = subjectFilter ? (c.subject || '').toLowerCase().includes(subjectFilter.toLowerCase()) : true;
+    return matchText && matchSubject;
+  });
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const pageData = filtered.slice((page - 1) * pageSize, page * pageSize);
+
+  return (
+    <>
       <table className="table">
         <thead>
           <tr>
@@ -414,7 +552,7 @@ function CourseSection() {
           </tr>
         </thead>
         <tbody>
-          {courses?.map((c) => (
+          {pageData.map((c) => (
             <tr key={c.id}>
               <td>{c.id}</td>
               <td>{c.name}</td>
@@ -425,7 +563,18 @@ function CourseSection() {
           ))}
         </tbody>
       </table>
-    </div>
+      <div className="pagination">
+        <button className="secondary" onClick={() => setPage(Math.max(1, page - 1))} disabled={page === 1}>
+          이전
+        </button>
+        <span>
+          {page} / {totalPages}
+        </span>
+        <button className="secondary" onClick={() => setPage(Math.min(totalPages, page + 1))} disabled={page === totalPages}>
+          다음
+        </button>
+      </div>
+    </>
   );
 }
 
