@@ -3,9 +3,9 @@
 학생들의 출결과 성적을 한 번에 관리하는 웹 기반 데모입니다. 기본 관리자 계정으로 로그인해 학생/강좌 등록, 출결 입력, 성적 입력·집계를 바로 해볼 수 있습니다.
 
 ## 배포 URL
-- 백엔드 API: <작성 후 URL 기입> (예: https://your-api.onrender.com)
-- API 문서(Swagger): <작성 후 URL 기입>/docs
-- 프론트엔드: <작성 후 URL 기입> (예: https://your-frontend.onrender.com)
+- 백엔드 API: https://backend-geqe.onrender.com
+- API 문서(Swagger): https://backend-geqe.onrender.com/docs
+- 프론트엔드: https://frontend-zclx.onrender.com
 
 > Render 등 무료 호스팅은 슬립 상태에서 깨우는 데 1~2분이 걸릴 수 있습니다.
 
