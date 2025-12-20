@@ -205,26 +205,40 @@ function DashboardSection({ go }: { go: (tab: Tab) => void }) {
 
       <div className="stats-grid">
         <div className="stat-card">
-          <div className="stat-label">총 학생 수</div>
-          <div className="stat-value">{totalStudents}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">진행 중인 과정</div>
-          <div className="stat-value">{totalCourses}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">출석률</div>
-          <div className="stat-value">
-            {attendanceSummary && attendanceSummary.session_count > 0
-              ? `${Math.round(
-                  (attendanceSummary.present / Math.max(attendanceSummary.present + attendanceSummary.absent + attendanceSummary.late + attendanceSummary.excused, 1)) * 100,
-                )}%`
-              : '-'}
+          <div className="stat-icon">👥</div>
+          <div>
+            <div className="stat-label">총 학생 수</div>
+            <div className="stat-value">{totalStudents}</div>
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-label">평균 성적</div>
-          <div className="stat-value">{courseGrade?.average_score ?? '-'}</div>
+          <div className="stat-icon">📚</div>
+          <div>
+            <div className="stat-label">진행 중인 과정</div>
+            <div className="stat-value">{totalCourses}</div>
+          </div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-icon">✅</div>
+          <div>
+            <div className="stat-label">출석률</div>
+            <div className="stat-value">
+              {attendanceSummary && attendanceSummary.session_count > 0
+                ? `${Math.round(
+                    (attendanceSummary.present /
+                      Math.max(attendanceSummary.present + attendanceSummary.absent + attendanceSummary.late + attendanceSummary.excused, 1)) *
+                      100,
+                  )}%`
+                : '-'}
+            </div>
+          </div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-icon">📈</div>
+          <div>
+            <div className="stat-label">평균 성적</div>
+            <div className="stat-value">{courseGrade?.average_score ?? '-'}</div>
+          </div>
         </div>
       </div>
 
@@ -247,22 +261,24 @@ function DashboardSection({ go }: { go: (tab: Tab) => void }) {
         </div>
         <div className="quick-grid">
           <button className="quick-card" onClick={() => go('students')}>
-            학생 등록
+            <span className="quick-emoji">🧑‍🎓</span>
+            <span>학생 등록</span>
           </button>
           <button className="quick-card" onClick={() => go('attendance')}>
-            오늘 출결 입력
+            <span className="quick-emoji">🗓️</span>
+            <span>오늘 출결 입력</span>
           </button>
           <button className="quick-card" onClick={() => go('grades')}>
-            새 평가 생성
+            <span className="quick-emoji">📝</span>
+            <span>새 평가 생성</span>
           </button>
           <button className="quick-card" onClick={() => go('courses')}>
-            과정/강좌 관리
+            <span className="quick-emoji">🏫</span>
+            <span>과정/강좌 관리</span>
           </button>
           <button className="quick-card" onClick={() => go('assignments')}>
-            과제 관리
-          </button>
-          <button className="quick-card" onClick={() => go('assignments')}>
-            과제 관리
+            <span className="quick-emoji">📂</span>
+            <span>과제 관리</span>
           </button>
         </div>
       </div>
