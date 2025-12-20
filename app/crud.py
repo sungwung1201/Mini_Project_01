@@ -65,7 +65,7 @@ def create_course(db: Session, payload: CourseCreate) -> Course:
   db.add(course)
   db.commit()
   db.refresh(course)
-    return course
+  return course
 
 
 def list_courses(db: Session) -> List[Course]:
@@ -97,7 +97,7 @@ def enroll_student(db: Session, course_id: int, student_id: int) -> Enrollment:
   db.add(enrollment)
   db.commit()
   db.refresh(enrollment)
-    return enrollment
+  return enrollment
 
 
 def list_enrollments(db: Session, course_id: int) -> List[Enrollment]:
