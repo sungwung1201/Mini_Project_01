@@ -915,7 +915,7 @@ function GradeSection({ notify }: { notify: (type: Toast['type'], msg: string) =
             onChange={(e) => setAssessmentForm({ ...assessmentForm, max_score: Number(e.target.value) })}
           />
         </div>
-        <button className="btn-slim" style={{ minWidth: 120 }} onClick={addAssessment}>
+        <button className="btn-compact" style={{ minWidth: 110 }} onClick={addAssessment}>
           평가 추가
         </button>
       </div>
@@ -965,16 +965,16 @@ function GradeSection({ notify }: { notify: (type: Toast['type'], msg: string) =
             ))}
           </select>
         </div>
-        <button className="btn-slim" style={{ minWidth: 140 }} onClick={loadStudentGrade}>
+        <button className="btn-compact" style={{ minWidth: 120 }} onClick={loadStudentGrade}>
           학생 성적 보기
         </button>
-        <button className="secondary btn-slim" style={{ minWidth: 160 }} onClick={loadCourseGrade}>
+        <button className="secondary btn-compact" style={{ minWidth: 140 }} onClick={loadCourseGrade}>
           강좌 성적 요약 보기
         </button>
-        <button className="secondary btn-slim" style={{ minWidth: 140 }} onClick={exportCourseGrade} disabled={!courseGrade}>
+        <button className="secondary btn-compact" style={{ minWidth: 120 }} onClick={exportCourseGrade} disabled={!courseGrade}>
           강좌 성적 CSV
         </button>
-        <button className="secondary btn-slim" style={{ minWidth: 140 }} onClick={exportStudentGrades} disabled={!studentGrade}>
+        <button className="secondary btn-compact" style={{ minWidth: 120 }} onClick={exportStudentGrades} disabled={!studentGrade}>
           학생 성적 CSV
         </button>
       </div>
