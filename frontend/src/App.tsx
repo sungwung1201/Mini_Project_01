@@ -421,7 +421,9 @@ function StudentSection({ notify }: { notify: (type: Toast['type'], msg: string)
           />
         </div>
       </div>
-      <button onClick={addStudent}>학생 추가</button>
+      <button className="btn-slim" onClick={addStudent}>
+        학생 추가
+      </button>
       {loading && <p>불러오는 중...</p>}
       {error && <p className="error-text">{error}</p>}
       <table className="table">
@@ -510,7 +512,9 @@ function CourseSection({ notify }: { notify: (type: Toast['type'], msg: string) 
           <input value={form.teacher_name} onChange={(e) => setForm({ ...form, teacher_name: e.target.value })} />
         </div>
       </div>
-      <button onClick={addCourse}>강좌 추가</button>
+      <button className="btn-slim" onClick={addCourse}>
+        강좌 추가
+      </button>
       <div className="form-row" style={{ marginTop: 12 }}>
         <div>
           <label>검색 (강좌/과목/교사)</label>
@@ -714,7 +718,7 @@ function AttendanceSection({ notify }: { notify: (type: Toast['type'], msg: stri
             ))}
           </select>
         </div>
-        <button className="secondary btn-compact" onClick={loadSummary}>
+        <button className="secondary btn-slim" onClick={loadSummary}>
           출결 요약 보기
         </button>
       </div>
@@ -754,7 +758,7 @@ function AttendanceSection({ notify }: { notify: (type: Toast['type'], msg: stri
 
       {selectedSessionId && (
         <div style={{ marginTop: 12 }}>
-          <button className="btn-compact" onClick={saveAttendance}>
+          <button className="btn-slim" onClick={saveAttendance}>
             출결 저장
           </button>
         </div>
@@ -889,7 +893,9 @@ function GradeSection({ notify }: { notify: (type: Toast['type'], msg: string) =
             onChange={(e) => setAssessmentForm({ ...assessmentForm, max_score: Number(e.target.value) })}
           />
         </div>
-        <button onClick={addAssessment}>평가 추가</button>
+        <button className="btn-slim" onClick={addAssessment}>
+          평가 추가
+        </button>
       </div>
 
       {assessments && assessments.length > 0 && (
@@ -904,7 +910,7 @@ function GradeSection({ notify }: { notify: (type: Toast['type'], msg: string) =
                     weight {ass.weight}, max {ass.max_score}
                   </div>
                 </div>
-                <button className="secondary btn-compact" onClick={() => saveScores(ass.id)}>
+                <button className="secondary btn-slim" onClick={() => saveScores(ass.id)}>
                   점수 저장
                 </button>
               </div>
@@ -937,16 +943,16 @@ function GradeSection({ notify }: { notify: (type: Toast['type'], msg: string) =
             ))}
           </select>
         </div>
-        <button className="btn-compact" onClick={loadStudentGrade}>
+        <button className="btn-slim" onClick={loadStudentGrade}>
           학생 성적 보기
         </button>
-        <button className="secondary btn-compact" onClick={loadCourseGrade}>
+        <button className="secondary btn-slim" onClick={loadCourseGrade}>
           강좌 성적 요약 보기
         </button>
-        <button className="secondary btn-compact" onClick={exportCourseGrade} disabled={!courseGrade}>
+        <button className="secondary btn-slim" onClick={exportCourseGrade} disabled={!courseGrade}>
           강좌 성적 CSV
         </button>
-        <button className="secondary btn-compact" onClick={exportStudentGrades} disabled={!studentGrade}>
+        <button className="secondary btn-slim" onClick={exportStudentGrades} disabled={!studentGrade}>
           학생 성적 CSV
         </button>
       </div>
@@ -1072,7 +1078,9 @@ function AssignmentSection({ notify }: { notify: (type: Toast['type'], msg: stri
             onChange={(e) => setAssignmentForm({ ...assignmentForm, max_score: Number(e.target.value) })}
           />
         </div>
-        <button onClick={createAssignment}>과제 추가</button>
+        <button className="btn-slim" onClick={createAssignment}>
+          과제 추가
+        </button>
       </div>
 
       {assignments && assignments.length > 0 ? (
@@ -1085,7 +1093,7 @@ function AssignmentSection({ notify }: { notify: (type: Toast['type'], msg: stri
                   weight {ass.weight}, max {ass.max_score}
                 </div>
               </div>
-              <button className="secondary btn-compact" onClick={() => saveAssignmentScores(ass.id)}>
+              <button className="secondary btn-slim" onClick={() => saveAssignmentScores(ass.id)}>
                 점수 저장
               </button>
             </div>
