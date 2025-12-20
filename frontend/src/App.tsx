@@ -967,20 +967,20 @@ function GradeSection({ notify }: { notify: (type: Toast['type'], msg: string) =
             ))}
           </select>
         </div>
-        <div className="action-row">
-          <button className="btn-compact" style={{ minWidth: 110 }} onClick={loadStudentGrade}>
-            학생 성적 보기
-          </button>
-          <button className="secondary btn-compact" style={{ minWidth: 130 }} onClick={loadCourseGrade}>
-            강좌 성적 요약 보기
-          </button>
-          <button className="secondary btn-compact" style={{ minWidth: 120 }} onClick={exportCourseGrade} disabled={!courseGrade}>
-            강좌 성적 CSV
-          </button>
-          <button className="secondary btn-compact" style={{ minWidth: 120 }} onClick={exportStudentGrades} disabled={!studentGrade}>
-            학생 성적 CSV
-          </button>
-        </div>
+      </div>
+      <div className="action-row" style={{ marginTop: 8 }}>
+        <button className="btn-compact primary" style={{ minWidth: 110 }} onClick={loadStudentGrade}>
+          학생 성적 보기
+        </button>
+        <button className="btn-compact primary" style={{ minWidth: 130 }} onClick={loadCourseGrade}>
+          강좌 성적 요약 보기
+        </button>
+        <button className="btn-compact primary" style={{ minWidth: 120 }} onClick={exportCourseGrade} disabled={!courseGrade}>
+          강좌 성적 CSV
+        </button>
+        <button className="btn-compact primary" style={{ minWidth: 120 }} onClick={exportStudentGrades} disabled={!studentGrade}>
+          학생 성적 CSV
+        </button>
       </div>
 
       {studentGrade && (
