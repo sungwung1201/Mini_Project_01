@@ -38,7 +38,16 @@ function useLoad<T>(fetcher: () => Promise<T>, deps: unknown[] = []) {
     setState((prev) => ({ ...prev, loading: true, error: null }));
     fetcher()
       .then((res) => mounted && setState({ data: res, loading: false, error: null }))
-      .catch((err) => mounted && setState({ data: null, loading: false, error: err?.response?.data?.detail || err.message }))
+      .catch((err) => {
+        const detail = err?.response?.data?.detail;
+        const msg =
+          typeof detail === 'string'
+            ? detail
+            : Array.isArray(detail)
+              ? detail.map((d: any) => d?.msg || JSON.stringify(d)).join(', ')
+              : detail?.msg || err.message;
+        mounted && setState({ data: null, loading: false, error: msg || '오류가 발생했습니다.' });
+      })
       .finally(() => mounted && setState((prev) => ({ ...prev, loading: false })));
     return () => {
       mounted = false;

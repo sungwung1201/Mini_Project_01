@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from typing import List, Optional
 
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, field_validator
 
 from .models import AttendanceStatus
 
@@ -10,6 +10,18 @@ class StudentBase(BaseModel):
     full_name: str = Field(..., example="Kim Yuna")
     email: Optional[EmailStr] = None
     grade_level: Optional[str] = Field(None, example="Grade 10")
+
+    @field_validator("email", mode="before")
+    def empty_email_as_none(cls, v):
+        if isinstance(v, str) and not v.strip():
+            return None
+        return v
+
+    @field_validator("grade_level", mode="before")
+    def empty_grade_as_none(cls, v):
+        if isinstance(v, str) and not v.strip():
+            return None
+        return v
 
 
 class StudentCreate(StudentBase):
