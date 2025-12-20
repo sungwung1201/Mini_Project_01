@@ -17,13 +17,13 @@ from .models import (
     User,
 )
 from .schemas import (
-    AssessmentCreate,
-    AttendanceInput,
-    CourseCreate,
-    ScoreInput,
-    SessionCreate,
-    StudentCreate,
-    UserCreate,
+  AssessmentCreate,
+  AttendanceInput,
+  CourseCreate,
+  ScoreInput,
+  SessionCreate,
+  StudentCreate,
+  UserCreate,
 )
 from .security import get_password_hash, verify_password
 
@@ -37,26 +37,66 @@ def create_student(db: Session, payload: StudentCreate) -> Student:
 
 
 def list_students(db: Session) -> List[Student]:
-    return list(db.scalars(select(Student).order_by(Student.created_at.desc())))
+  return list(db.scalars(select(Student).order_by(Student.created_at.desc())))
+
+
+def update_student(db: Session, student_id: int, payload: StudentCreate) -> Student | None:
+  student = db.get(Student, student_id)
+  if not student:
+    return None
+  for key, value in payload.dict().items():
+    setattr(student, key, value)
+  db.commit()
+  db.refresh(student)
+  return student
+
+
+def delete_student(db: Session, student_id: int) -> bool:
+  student = db.get(Student, student_id)
+  if not student:
+    return False
+  db.delete(student)
+  db.commit()
+  return True
 
 
 def create_course(db: Session, payload: CourseCreate) -> Course:
-    course = Course(**payload.dict())
-    db.add(course)
-    db.commit()
-    db.refresh(course)
+  course = Course(**payload.dict())
+  db.add(course)
+  db.commit()
+  db.refresh(course)
     return course
 
 
 def list_courses(db: Session) -> List[Course]:
-    return list(db.scalars(select(Course).order_by(Course.created_at.desc())))
+  return list(db.scalars(select(Course).order_by(Course.created_at.desc())))
+
+
+def update_course(db: Session, course_id: int, payload: CourseCreate) -> Course | None:
+  course = db.get(Course, course_id)
+  if not course:
+    return None
+  for key, value in payload.dict().items():
+    setattr(course, key, value)
+  db.commit()
+  db.refresh(course)
+  return course
+
+
+def delete_course(db: Session, course_id: int) -> bool:
+  course = db.get(Course, course_id)
+  if not course:
+    return False
+  db.delete(course)
+  db.commit()
+  return True
 
 
 def enroll_student(db: Session, course_id: int, student_id: int) -> Enrollment:
-    enrollment = Enrollment(course_id=course_id, student_id=student_id)
-    db.add(enrollment)
-    db.commit()
-    db.refresh(enrollment)
+  enrollment = Enrollment(course_id=course_id, student_id=student_id)
+  db.add(enrollment)
+  db.commit()
+  db.refresh(enrollment)
     return enrollment
 
 

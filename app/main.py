@@ -86,6 +86,27 @@ def list_students(db: Session = Depends(get_db), _: models.User = Depends(get_cu
     return crud.list_students(db)
 
 
+@app.put("/students/{student_id}", response_model=schemas.StudentRead)
+def update_student(
+    student_id: int,
+    payload: schemas.StudentCreate,
+    db: Session = Depends(get_db),
+    _: models.User = Depends(get_current_user),
+):
+    updated = crud.update_student(db, student_id, payload)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Student not found")
+    return updated
+
+
+@app.delete("/students/{student_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_student(student_id: int, db: Session = Depends(get_db), _: models.User = Depends(get_current_user)):
+    ok = crud.delete_student(db, student_id)
+    if not ok:
+        raise HTTPException(status_code=404, detail="Student not found")
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
 @app.get(
     "/students/{student_id}/grades",
     response_model=list[schemas.GradeSummary],
@@ -121,6 +142,27 @@ def create_course(
 @app.get("/courses", response_model=list[schemas.CourseRead])
 def list_courses(db: Session = Depends(get_db), _: models.User = Depends(get_current_user)):
     return crud.list_courses(db)
+
+
+@app.put("/courses/{course_id}", response_model=schemas.CourseRead)
+def update_course(
+    course_id: int,
+    payload: schemas.CourseCreate,
+    db: Session = Depends(get_db),
+    _: models.User = Depends(get_current_user),
+):
+    updated = crud.update_course(db, course_id, payload)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Course not found")
+    return updated
+
+
+@app.delete("/courses/{course_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_course(course_id: int, db: Session = Depends(get_db), _: models.User = Depends(get_current_user)):
+    ok = crud.delete_course(db, course_id)
+    if not ok:
+        raise HTTPException(status_code=404, detail="Course not found")
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @app.post(

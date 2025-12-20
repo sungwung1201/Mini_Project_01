@@ -459,6 +459,7 @@ function StudentSection({ notify }: { notify: (type: Toast['type'], msg: string)
             <th>이름</th>
             <th>이메일</th>
             <th>학년/반</th>
+            <th>관리</th>
           </tr>
         </thead>
         <tbody>
@@ -468,6 +469,35 @@ function StudentSection({ notify }: { notify: (type: Toast['type'], msg: string)
               <td>{s.full_name}</td>
               <td>{s.email}</td>
               <td>{s.grade_level}</td>
+              <td>
+                <button
+                  className="btn-compact"
+                  onClick={async () => {
+                    const full_name = prompt('이름', s.full_name) ?? s.full_name;
+                    const email = prompt('이메일', s.email || '') ?? s.email;
+                    const grade_level = prompt('학년/반', s.grade_level || '') ?? s.grade_level;
+                    await api.put(`/students/${s.id}`, { full_name, email, grade_level });
+                    setData((prev) =>
+                      prev
+                        ? prev.map((st) => (st.id === s.id ? { ...st, full_name, email, grade_level } as Student : st))
+                        : prev
+                    );
+                  }}
+                >
+                  수정
+                </button>
+                <button
+                  className="secondary btn-compact"
+                  onClick={async () => {
+                    if (confirm('이 학생을 삭제할까요?')) {
+                      await api.delete(`/students/${s.id}`);
+                      setData((prev) => (prev ? prev.filter((st) => st.id !== s.id) : prev));
+                    }
+                  }}
+                >
+                  삭제
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -613,6 +643,7 @@ function CourseTable({
             <th>과목</th>
             <th>학급</th>
             <th>교사</th>
+            <th>관리</th>
           </tr>
         </thead>
         <tbody>
@@ -623,6 +654,32 @@ function CourseTable({
               <td>{c.subject}</td>
               <td>{c.class_name}</td>
               <td>{c.teacher_name}</td>
+              <td>
+                <button
+                  className="btn-compact"
+                  onClick={async () => {
+                    const name = prompt('강좌명', c.name) ?? c.name;
+                    const subject = prompt('과목', c.subject || '') ?? c.subject;
+                    const class_name = prompt('학급', c.class_name || '') ?? c.class_name;
+                    const teacher_name = prompt('담임/교사', c.teacher_name || '') ?? c.teacher_name;
+                    await api.put(`/courses/${c.id}`, { name, subject, class_name, teacher_name });
+                    setPage(1);
+                  }}
+                >
+                  수정
+                </button>
+                <button
+                  className="secondary btn-compact"
+                  onClick={async () => {
+                    if (confirm('이 강좌를 삭제할까요?')) {
+                      await api.delete(`/courses/${c.id}`);
+                      setPage(1);
+                    }
+                  }}
+                >
+                  삭제
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
