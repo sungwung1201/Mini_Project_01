@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Depends, FastAPI, HTTPException, status, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.exc import IntegrityError
@@ -50,6 +50,12 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     return user
 
 
+def require_role(user: models.User, roles: set[str]):
+    if user.role not in roles:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
+    return user
+
+
 @app.post("/auth/login", response_model=schemas.Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = crud.authenticate_user(db, form_data.username, form_data.password)
@@ -76,8 +82,9 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
 def create_student(
     payload: schemas.StudentCreate,
     db: Session = Depends(get_db),
-    _: models.User = Depends(get_current_user),
+    current: models.User = Depends(get_current_user),
 ):
+    require_role(current, {"admin"})
     return crud.create_student(db, payload)
 
 
@@ -91,8 +98,9 @@ def update_student(
     student_id: int,
     payload: schemas.StudentCreate,
     db: Session = Depends(get_db),
-    _: models.User = Depends(get_current_user),
+    current: models.User = Depends(get_current_user),
 ):
+    require_role(current, {"admin"})
     updated = crud.update_student(db, student_id, payload)
     if not updated:
         raise HTTPException(status_code=404, detail="Student not found")
@@ -100,7 +108,8 @@ def update_student(
 
 
 @app.delete("/students/{student_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_student(student_id: int, db: Session = Depends(get_db), _: models.User = Depends(get_current_user)):
+def delete_student(student_id: int, db: Session = Depends(get_db), current: models.User = Depends(get_current_user)):
+    require_role(current, {"admin"})
     ok = crud.delete_student(db, student_id)
     if not ok:
         raise HTTPException(status_code=404, detail="Student not found")
@@ -134,8 +143,11 @@ def get_student_grades(
     status_code=status.HTTP_201_CREATED,
 )
 def create_course(
-    payload: schemas.CourseCreate, db: Session = Depends(get_db), _: models.User = Depends(get_current_user)
+    payload: schemas.CourseCreate,
+    db: Session = Depends(get_db),
+    current: models.User = Depends(get_current_user),
 ):
+    require_role(current, {"admin", "teacher"})
     return crud.create_course(db, payload)
 
 
@@ -149,8 +161,9 @@ def update_course(
     course_id: int,
     payload: schemas.CourseCreate,
     db: Session = Depends(get_db),
-    _: models.User = Depends(get_current_user),
+    current: models.User = Depends(get_current_user),
 ):
+    require_role(current, {"admin", "teacher"})
     updated = crud.update_course(db, course_id, payload)
     if not updated:
         raise HTTPException(status_code=404, detail="Course not found")
@@ -158,7 +171,12 @@ def update_course(
 
 
 @app.delete("/courses/{course_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_course(course_id: int, db: Session = Depends(get_db), _: models.User = Depends(get_current_user)):
+def delete_course(
+    course_id: int,
+    db: Session = Depends(get_db),
+    current: models.User = Depends(get_current_user),
+):
+    require_role(current, {"admin"})
     ok = crud.delete_course(db, course_id)
     if not ok:
         raise HTTPException(status_code=404, detail="Course not found")
@@ -174,8 +192,9 @@ def enroll_student(
     course_id: int,
     payload: schemas.EnrollmentCreate,
     db: Session = Depends(get_db),
-    _: models.User = Depends(get_current_user),
+    current: models.User = Depends(get_current_user),
 ):
+    require_role(current, {"admin", "teacher"})
     try:
         return crud.enroll_student(db, course_id, payload.student_id)
     except IntegrityError:
@@ -198,8 +217,9 @@ def create_session(
     course_id: int,
     payload: schemas.SessionCreate,
     db: Session = Depends(get_db),
-    _: models.User = Depends(get_current_user),
+    current: models.User = Depends(get_current_user),
 ):
+    require_role(current, {"admin", "teacher"})
     try:
         return crud.create_session(db, course_id, payload)
     except IntegrityError:
@@ -221,8 +241,9 @@ def upsert_attendance(
     session_id: int,
     payload: list[schemas.AttendanceInput],
     db: Session = Depends(get_db),
-    _: models.User = Depends(get_current_user),
+    current: models.User = Depends(get_current_user),
 ):
+    require_role(current, {"admin", "teacher"})
     return crud.upsert_attendance(db, session_id, payload)
 
 
@@ -252,8 +273,9 @@ def create_assessment(
     course_id: int,
     payload: schemas.AssessmentCreate,
     db: Session = Depends(get_db),
-    _: models.User = Depends(get_current_user),
+    current: models.User = Depends(get_current_user),
 ):
+    require_role(current, {"admin", "teacher"})
     try:
         return crud.create_assessment(db, course_id, payload)
     except IntegrityError:
@@ -277,8 +299,9 @@ def upsert_scores(
     assessment_id: int,
     payload: list[schemas.ScoreInput],
     db: Session = Depends(get_db),
-    _: models.User = Depends(get_current_user),
+    current: models.User = Depends(get_current_user),
 ):
+    require_role(current, {"admin", "teacher"})
     return crud.upsert_scores(db, assessment_id, payload)
 
 

@@ -1,4 +1,19 @@
 import { useEffect, useMemo, useState } from 'react';
+import type { LucideIcon } from 'lucide-react';
+import {
+  BarChart3,
+  BookOpen,
+  CalendarCheck,
+  ClipboardList,
+  FilePlus2,
+  Files,
+  GraduationCap,
+  LayoutDashboard,
+  Percent,
+  TrendingUp,
+  UserRoundPlus,
+  Users,
+} from 'lucide-react';
 import {
   api,
   Assessment,
@@ -13,6 +28,7 @@ import {
   login,
 } from './api';
 
+
 const attendanceOptions = [
   { value: 'present', label: '출석' },
   { value: 'late', label: '지각' },
@@ -23,12 +39,37 @@ const attendanceOptions = [
 type Tab = 'dashboard' | 'students' | 'courses' | 'attendance' | 'grades' | 'assignments';
 type Role = 'admin' | 'teacher';
 type Toast = { id: number; type: 'success' | 'error'; message: string };
+type NavItem = { key: Tab; label: string; icon: LucideIcon; roles: Role[] | 'all' };
+
 
 type LoadState<T> = {
   data: T | null;
   loading: boolean;
   error: string | null;
 };
+
+const NAV_ITEMS: NavItem[] = [
+  { key: 'dashboard', label: '대시보드', icon: LayoutDashboard, roles: 'all' },
+  { key: 'students', label: '학생 관리', icon: GraduationCap, roles: ['admin'] },
+  { key: 'courses', label: '과정 관리', icon: BookOpen, roles: ['admin'] },
+  { key: 'attendance', label: '출결 관리', icon: CalendarCheck, roles: 'all' },
+  { key: 'grades', label: '성적 관리', icon: BarChart3, roles: 'all' },
+  { key: 'assignments', label: '과제 관리', icon: ClipboardList, roles: 'all' },
+];
+
+
+const STEP_FLOW: { key: Tab; label: string }[] = [
+  { key: 'dashboard', label: '요약' },
+  { key: 'students', label: '학생' },
+  { key: 'courses', label: '과정' },
+  { key: 'attendance', label: '출결' },
+  { key: 'grades', label: '성적' },
+  { key: 'assignments', label: '과제' },
+];
+
+function visibleNavItems(role: Role) {
+  return NAV_ITEMS.filter((i) => i.roles === 'all' || i.roles.includes(role));
+}
 
 function useLoad<T>(fetcher: () => Promise<T>, deps: unknown[] = []) {
   const [state, setState] = useState<LoadState<T>>({ data: null, loading: false, error: null });
@@ -119,32 +160,26 @@ function Sidebar({
   role: Role;
   onRoleChange: (r: Role) => void;
 }) {
-  const baseItems: { key: Tab; label: string; icon: string }[] = [
-    { key: 'dashboard', label: '대시보드', icon: '▦' },
-    { key: 'attendance', label: '출결 관리', icon: '📅' },
-    { key: 'grades', label: '성적 관리', icon: '📈' },
-    { key: 'assignments', label: '과제 관리', icon: '📋' },
-  ];
-  const adminOnly: { key: Tab; label: string; icon: string }[] = [
-    { key: 'students', label: '학생 관리', icon: '📖' },
-    { key: 'courses', label: '과정 관리', icon: '📚' },
-  ];
-  const items = role === 'admin' ? [...baseItems.slice(0, 1), ...adminOnly, ...baseItems.slice(1)] : baseItems;
+  const items = visibleNavItems(role);
 
   return (
     <aside className="sidebar">
       <div className="brand">Grade Management</div>
       <nav className="nav">
-        {items.map((item) => (
-          <button
-            key={item.key}
-            className={`nav-item ${tab === item.key ? 'active' : ''}`}
-            onClick={() => setTab(item.key)}
-          >
-            <span className="nav-icon">{item.icon}</span>
-            <span>{item.label}</span>
-          </button>
-        ))}
+        {items.map((item) => {
+          const Icon = item.icon;
+          return (
+            <button
+              key={item.key}
+              className={`nav-item ${tab === item.key ? 'active' : ''}`}
+              onClick={() => setTab(item.key)}
+            >
+              <Icon className="nav-icon" aria-hidden="true" />
+              <span>{item.label}</span>
+            </button>
+          );
+        })}
+
       </nav>
       <div className="sidebar-footer">
         <div className="user">
@@ -166,6 +201,97 @@ function Sidebar({
         </button>
       </div>
     </aside>
+  );
+}
+
+function HeaderBar({ tab }: { tab: Tab }) {
+  return (
+    <div className="header-bar">
+      <div>
+        <div className="header-eyebrow">Admin Dashboard</div>
+        <div className="header-title">출결·성적 관리 · {tab.toUpperCase()}</div>
+      </div>
+      <div className="header-actions">
+        <input className="header-search" placeholder="검색 (학생/강좌/과목)" />
+        <button className="secondary">공지 작성</button>
+        <button>새 작업</button>
+      </div>
+    </div>
+  );
+}
+
+function Topbar({ tab, setTab, role }: { tab: Tab; setTab: (t: Tab) => void; role: Role }) {
+  const items = visibleNavItems(role);
+  const stepIndex = STEP_FLOW.findIndex((s) => s.key === tab);
+
+  return (
+    <div className="topbar">
+      <div className="topbar-main">
+        <div className="topbar-title">네비게이션</div>
+        <div className="topbar-chips">
+          {items.map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.key}
+                className={`chip ${tab === item.key ? 'chip-active' : ''}`}
+                onClick={() => setTab(item.key)}
+              >
+                <Icon className="chip-icon" aria-hidden="true" />
+                {item.label}
+              </button>
+            );
+          })}
+
+        </div>
+      </div>
+      <div className="topbar-actions">
+        <label className="muted" style={{ fontSize: 12 }}>
+          빠른 이동
+        </label>
+        <select value={tab} onChange={(e) => setTab(e.target.value as Tab)}>
+          {items.map((item) => (
+            <option key={item.key} value={item.key}>
+              {item.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="stepper">
+        {STEP_FLOW.map((s, idx) => {
+          const active = idx === stepIndex;
+          const done = stepIndex > idx;
+          return (
+            <div key={s.key} className="step">
+              <div className={`step-dot ${active ? 'active' : ''} ${done ? 'done' : ''}`}>{idx + 1}</div>
+              <div className="step-label">{s.label}</div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function StatusLegend({
+  items,
+  title = '상태 레전드',
+}: {
+  items: { label: string; color: string }[];
+  title?: string;
+}) {
+  return (
+    <div className="legend">
+      <div className="legend-title">{title}</div>
+      <div className="legend-items">
+        {items.map((i) => (
+          <span key={i.label} className="legend-pill" style={{ background: i.color }}>
+            {i.label}
+          </span>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -215,21 +341,21 @@ function DashboardSection({ go }: { go: (tab: Tab) => void }) {
 
       <div className="stats-grid">
         <div className="stat-card">
-          <div className="stat-icon purple">👥</div>
+          <div className="stat-icon purple"><Users className="stat-icon-svg" aria-hidden="true" /></div>
           <div>
             <div className="stat-label">총 학생 수</div>
             <div className="stat-value">{totalStudents}</div>
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon teal">📖</div>
+          <div className="stat-icon teal"><BookOpen className="stat-icon-svg" aria-hidden="true" /></div>
           <div>
             <div className="stat-label">진행 중인 과정</div>
             <div className="stat-value">{totalCourses}</div>
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon green">✅</div>
+          <div className="stat-icon green"><Percent className="stat-icon-svg" aria-hidden="true" /></div>
           <div>
             <div className="stat-label">출석률</div>
             <div className="stat-value">
@@ -244,7 +370,7 @@ function DashboardSection({ go }: { go: (tab: Tab) => void }) {
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon orange">📈</div>
+          <div className="stat-icon orange"><TrendingUp className="stat-icon-svg" aria-hidden="true" /></div>
           <div>
             <div className="stat-label">평균 성적</div>
             <div className="stat-value">{courseGrade?.average_score ?? '-'}</div>
@@ -271,23 +397,23 @@ function DashboardSection({ go }: { go: (tab: Tab) => void }) {
         </div>
         <div className="quick-grid">
           <button className="quick-card" onClick={() => go('students')}>
-            <span className="quick-emoji">🧑‍🎓</span>
+            <UserRoundPlus className="quick-icon" aria-hidden="true" />
             <span>학생 등록</span>
           </button>
           <button className="quick-card" onClick={() => go('attendance')}>
-            <span className="quick-emoji">🗓️</span>
+            <CalendarCheck className="quick-icon" aria-hidden="true" />
             <span>오늘 출결 입력</span>
           </button>
           <button className="quick-card" onClick={() => go('grades')}>
-            <span className="quick-emoji">📝</span>
+            <FilePlus2 className="quick-icon" aria-hidden="true" />
             <span>새 평가 생성</span>
           </button>
           <button className="quick-card" onClick={() => go('courses')}>
-            <span className="quick-emoji">🏫</span>
+            <BookOpen className="quick-icon" aria-hidden="true" />
             <span>과정/강좌 관리</span>
           </button>
           <button className="quick-card" onClick={() => go('assignments')}>
-            <span className="quick-emoji">📂</span>
+            <Files className="quick-icon" aria-hidden="true" />
             <span>과제 관리</span>
           </button>
         </div>
@@ -413,9 +539,16 @@ function StudentSection({ notify }: { notify: (type: Toast['type'], msg: string)
   const pageData = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   const exportCSV = () => {
-    const rows = [['id', 'name', 'email', 'grade']].concat(
-      (students || []).map((s) => [s.id, s.full_name, s.email || '', s.grade_level || ''])
-    );
+    const rows: string[][] = [
+      ['id', 'name', 'email', 'grade'],
+      ...(students ?? []).map((s) => [
+        String(s.id),
+        s.full_name,
+        s.email ?? '',
+        s.grade_level ?? '',
+      ]),
+    ];
+
     const csv = rows.map((r) => r.join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -890,60 +1023,82 @@ function AttendanceSection({ notify }: { notify: (type: Toast['type'], msg: stri
   return (
     <div className="card">
       <h2 className="section-title">출결</h2>
-      <div className="form-row tight">
-        <div>
-          <label>강좌 선택</label>
-          <select value={courseId ?? ''} onChange={(e) => setCourseId(Number(e.target.value))}>
-            <option value="">선택</option>
-            {courses?.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label>회차 날짜</label>
-          <input
-            type="date"
-            value={sessionForm.session_date}
-            onChange={(e) => setSessionForm({ ...sessionForm, session_date: e.target.value })}
-          />
-        </div>
-        <div>
-          <label>주제/메모</label>
-          <input
-            value={sessionForm.topic}
-            onChange={(e) => setSessionForm({ ...sessionForm, topic: e.target.value })}
-            placeholder="예: 3단원"
-          />
-        </div>
-        <div className="action-cell">
-          <button className="btn-slim" style={{ minWidth: 120 }} onClick={createSession}>
-            회차 추가
-          </button>
-        </div>
-      </div>
+      <StatusLegend
+        items={[
+          { label: '출석', color: '#16c784' },
+          { label: '지각', color: '#fbbf24' },
+          { label: '결석', color: '#ef4444' },
+          { label: '공결', color: '#38bdf8' },
+        ]}
+      />
 
-      <div className="form-row tight">
-        <div>
-          <label>회차 선택</label>
-          <select
-            value={selectedSessionId ?? ''}
-            onChange={(e) => setSelectedSessionId(Number(e.target.value))}
-          >
-            <option value="">선택</option>
-            {sessions?.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.session_date} {s.topic ? `(${s.topic})` : ''}
-              </option>
-            ))}
-          </select>
+      <div className="section-grid two">
+        <div className="panel">
+          <div className="panel-title">회차 생성</div>
+          <div className="form-row tight">
+            <div>
+              <label>강좌 선택</label>
+              <select value={courseId ?? ''} onChange={(e) => setCourseId(Number(e.target.value))}>
+                <option value="">선택</option>
+                {courses?.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label>회차 날짜</label>
+              <input
+                type="date"
+                value={sessionForm.session_date}
+                onChange={(e) => setSessionForm({ ...sessionForm, session_date: e.target.value })}
+              />
+            </div>
+            <div>
+              <label>주제/메모</label>
+              <input
+                value={sessionForm.topic}
+                onChange={(e) => setSessionForm({ ...sessionForm, topic: e.target.value })}
+                placeholder="예: 3단원"
+              />
+            </div>
+            <div className="action-cell">
+              <button className="btn-slim" style={{ minWidth: 120 }} onClick={createSession}>
+                회차 추가
+              </button>
+            </div>
+          </div>
         </div>
-        <div className="action-cell">
-          <button className="secondary btn-slim" style={{ minWidth: 140 }} onClick={loadSummary}>
-            출결 요약 보기
-          </button>
+
+        <div className="panel">
+          <div className="panel-title">회차 선택 & 요약</div>
+          <div className="form-row tight">
+            <div>
+              <label>회차 선택</label>
+              <select
+                value={selectedSessionId ?? ''}
+                onChange={(e) => setSelectedSessionId(Number(e.target.value))}
+              >
+                <option value="">선택</option>
+                {sessions?.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.session_date} {s.topic ? `(${s.topic})` : ''}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="action-cell">
+              <button className="secondary btn-slim" style={{ minWidth: 140 }} onClick={loadSummary}>
+                출결 요약 보기
+              </button>
+            </div>
+            <div className="action-cell">
+              <button className="secondary btn-slim" onClick={exportAttendance}>
+                요약 CSV
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -961,9 +1116,12 @@ function AttendanceSection({ notify }: { notify: (type: Toast['type'], msg: stri
                 <div>
                   <label>출결</label>
                   <select
-                    value={attendanceForm[stu.id]?.toString() || ''}
+                    value={attendanceForm[String(stu.id)] ?? ''}
                     onChange={(e) =>
-                      setAttendanceForm({ ...attendanceForm, [stu.id]: e.target.value as AttendanceRecord['status'] })
+                      setAttendanceForm({
+                        ...attendanceForm,
+                        [String(stu.id)]: e.target.value as AttendanceRecord['status'],
+                      })
                     }
                   >
                     <option value="">선택</option>
@@ -989,19 +1147,14 @@ function AttendanceSection({ notify }: { notify: (type: Toast['type'], msg: stri
       )}
 
       {summary && (
-        <div style={{ marginTop: 16 }}>
-          <div className="header">
-            <strong>요약</strong>
-            <button className="secondary" onClick={exportAttendance}>
-              요약 CSV
-            </button>
-          </div>
-          <div className="grid" style={{ marginTop: 8 }}>
-            <div className="card">세션 수: {summary.session_count}</div>
-            <div className="card">출석: {summary.present}</div>
-            <div className="card">지각: {summary.late}</div>
-            <div className="card">결석: {summary.absent}</div>
-            <div className="card">공결: {summary.excused}</div>
+        <div className="panel" style={{ marginTop: 16 }}>
+          <div className="panel-title">출결 요약</div>
+          <div className="mini-grid">
+            <div className="mini-card">세션 수: {summary.session_count}</div>
+            <div className="mini-card">출석: {summary.present}</div>
+            <div className="mini-card">지각: {summary.late}</div>
+            <div className="mini-card">결석: {summary.absent}</div>
+            <div className="mini-card">공결: {summary.excused}</div>
           </div>
         </div>
       )}
@@ -1038,8 +1191,12 @@ function GradeSection({ notify }: { notify: (type: Toast['type'], msg: string) =
   };
   const exportStudentGrades = () => {
     if (!studentGrade) return notify('error', '학생 성적 데이터가 없습니다.');
-    const rows = [['course_id', 'course_name', 'weighted_score']];
-    studentGrade.forEach((g) => rows.push([g.course_id, g.course_name, g.weighted_score]));
+
+    const rows: string[][] = [
+      ['course_id', 'course_name', 'weighted_score'],
+      ...studentGrade.map((g) => [String(g.course_id), g.course_name, String(g.weighted_score)]),
+    ];
+
     const csv = rows.map((r) => r.join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -1048,6 +1205,7 @@ function GradeSection({ notify }: { notify: (type: Toast['type'], msg: string) =
     a.download = 'student_grades.csv';
     a.click();
     URL.revokeObjectURL(url);
+
     notify('success', '학생 성적 CSV를 다운로드했습니다.');
   };
 
@@ -1084,6 +1242,15 @@ function GradeSection({ notify }: { notify: (type: Toast['type'], msg: string) =
   return (
     <div className="card">
       <h2 className="section-title">성적</h2>
+      <StatusLegend
+        title="평가/등급 레전드"
+        items={[
+          { label: 'A 90~', color: '#10b981' },
+          { label: 'B 80~', color: '#22c55e' },
+          { label: 'C 70~', color: '#f59e0b' },
+          { label: 'D/F <70', color: '#ef4444' },
+        ]}
+      />
       <div className="form-row tight">
         <div>
           <label>강좌 선택</label>
@@ -1372,6 +1539,8 @@ export default function App() {
     <div className="app-shell">
       <Sidebar tab={tab} setTab={setTab} onLogout={logout} role={role} onRoleChange={setRole} />
       <main className="main">
+        <HeaderBar tab={tab} />
+        <Topbar tab={tab} setTab={setTab} role={role} />
         {tab === 'dashboard' && <DashboardSection go={setTab} />}
         {tab === 'students' && role === 'admin' && <StudentSection notify={pushToast} />}
         {tab === 'courses' && role === 'admin' && <CourseSection notify={pushToast} />}
