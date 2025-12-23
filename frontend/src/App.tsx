@@ -17,7 +17,15 @@ import {
 type SvgIcon = (props: SVGProps<SVGSVGElement>) => JSX.Element;
 
 const IconLayoutDashboard: SvgIcon = (props) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
     <rect x="3" y="3" width="7" height="9" rx="2" />
     <rect x="14" y="3" width="7" height="5" rx="2" />
     <rect x="14" y="10" width="7" height="11" rx="2" />
@@ -26,7 +34,15 @@ const IconLayoutDashboard: SvgIcon = (props) => (
 );
 
 const IconGraduationCap: SvgIcon = (props) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
     <path d="M22 10L12 5 2 10l10 5 10-5Z" />
     <path d="M6 12v5c0 1 3 3 6 3s6-2 6-3v-5" />
     <path d="M2 10v6" />
@@ -34,7 +50,15 @@ const IconGraduationCap: SvgIcon = (props) => (
 );
 
 const IconBookOpen: SvgIcon = (props) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
     <path d="M12 7v14" />
     <path d="M3 5h7a2 2 0 0 1 2 2v14H5a2 2 0 0 1-2-2V5Z" />
     <path d="M21 5h-7a2 2 0 0 0-2 2v14h7a2 2 0 0 0 2-2V5Z" />
@@ -42,7 +66,15 @@ const IconBookOpen: SvgIcon = (props) => (
 );
 
 const IconCalendarCheck: SvgIcon = (props) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
     <path d="M8 2v3M16 2v3" />
     <path d="M3 8h18" />
     <rect x="3" y="4" width="18" height="18" rx="2" />
@@ -51,7 +83,15 @@ const IconCalendarCheck: SvgIcon = (props) => (
 );
 
 const IconBarChart: SvgIcon = (props) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
     <path d="M3 3v18h18" />
     <path d="M7 16v-6" />
     <path d="M12 16V7" />
@@ -60,7 +100,15 @@ const IconBarChart: SvgIcon = (props) => (
 );
 
 const IconClipboardList: SvgIcon = (props) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
     <rect x="9" y="2" width="6" height="4" rx="1" />
     <path d="M9 4H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2" />
     <path d="M8 11h8" />
@@ -70,7 +118,15 @@ const IconClipboardList: SvgIcon = (props) => (
 );
 
 const IconUsers: SvgIcon = (props) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
     <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
     <circle cx="9" cy="7" r="4" />
     <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
@@ -79,7 +135,15 @@ const IconUsers: SvgIcon = (props) => (
 );
 
 const IconPercent: SvgIcon = (props) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
     <path d="M19 5 5 19" />
     <circle cx="6.5" cy="6.5" r="2.5" />
     <circle cx="17.5" cy="17.5" r="2.5" />
@@ -87,14 +151,30 @@ const IconPercent: SvgIcon = (props) => (
 );
 
 const IconTrendingUp: SvgIcon = (props) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
     <path d="M3 17l6-6 4 4 8-8" />
     <path d="M14 7h7v7" />
   </svg>
 );
 
 const IconUserPlus: SvgIcon = (props) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
     <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
     <circle cx="8.5" cy="7" r="4" />
     <path d="M20 8v6" />
@@ -103,7 +183,15 @@ const IconUserPlus: SvgIcon = (props) => (
 );
 
 const IconFilePlus: SvgIcon = (props) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
     <path d="M14 2v6h6" />
     <path d="M12 11v6" />
@@ -112,7 +200,15 @@ const IconFilePlus: SvgIcon = (props) => (
 );
 
 const IconFiles: SvgIcon = (props) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
     <path d="M20 7h-6l-2-2H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2Z" />
     <path d="M2 10h20" />
   </svg>
@@ -128,12 +224,33 @@ const attendanceOptions = [
 type Tab = 'dashboard' | 'students' | 'courses' | 'attendance' | 'grades' | 'assignments';
 type Role = 'admin' | 'teacher';
 type Toast = { id: number; type: 'success' | 'error'; message: string };
+type NavItem = { key: Tab; label: string; icon: SvgIcon; roles: Role[] | 'all' };
 
 type LoadState<T> = {
   data: T | null;
   loading: boolean;
   error: string | null;
 };
+
+const NAV_ITEMS: NavItem[] = [
+  { key: 'students', label: '학생등록', icon: IconGraduationCap, roles: ['admin'] },
+  { key: 'attendance', label: '출결입력', icon: IconCalendarCheck, roles: 'all' },
+  { key: 'grades', label: '평가점수', icon: IconBarChart, roles: 'all' },
+  { key: 'courses', label: '과정관리', icon: IconBookOpen, roles: ['admin'] },
+  { key: 'assignments', label: '과제목록', icon: IconClipboardList, roles: 'all' },
+];
+
+const STEP_FLOW: { key: Tab; label: string }[] = [
+  { key: 'students', label: '학생등록' },
+  { key: 'attendance', label: '출결입력' },
+  { key: 'grades', label: '평가점수' },
+  { key: 'courses', label: '과정관리' },
+  { key: 'assignments', label: '과제목록' },
+];
+
+function visibleNavItems(role: Role) {
+  return NAV_ITEMS.filter((i) => i.roles === 'all' || i.roles.includes(role));
+}
 
 function useLoad<T>(fetcher: () => Promise<T>, deps: unknown[] = []) {
   const [state, setState] = useState<LoadState<T>>({ data: null, loading: false, error: null });
@@ -161,7 +278,8 @@ function useLoad<T>(fetcher: () => Promise<T>, deps: unknown[] = []) {
 
   return {
     ...state,
-    setData: (fn: (prev: T | null) => T | null) => setState((prev) => ({ ...prev, data: fn(prev.data) })),
+    setData: (fn: (prev: T | null) => T | null) =>
+      setState((prev) => ({ ...prev, data: fn(prev.data) })),
   };
 }
 
@@ -195,7 +313,12 @@ function LoginCard({ onSuccess }: { onSuccess: () => void }) {
         </div>
         <div className="field">
           <label>비밀번호</label>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="비밀번호를 입력하세요" />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="비밀번호를 입력하세요"
+          />
         </div>
         <button onClick={submit} disabled={loading} style={{ width: '100%' }}>
           {loading ? '로그인 중...' : '로그인'}
@@ -209,59 +332,139 @@ function LoginCard({ onSuccess }: { onSuccess: () => void }) {
   );
 }
 
-function HeaderBar({
+function Sidebar({
   tab,
   setTab,
+  onLogout,
   role,
   onRoleChange,
-  onLogout,
 }: {
   tab: Tab;
   setTab: (t: Tab) => void;
+  onLogout: () => void;
   role: Role;
   onRoleChange: (r: Role) => void;
-  onLogout: () => void;
 }) {
+  const items = visibleNavItems(role);
+
   return (
-    <div className="header-bar">
-      <div className="header-left">
-        <div className="brand">
-          <IconLayoutDashboard className="brand-icon" aria-hidden="true" />
-          <span>Grade Management</span>
+    <aside className="sidebar">
+      <div className="brand">Grade Management</div>
+      <nav className="nav">
+        {items.map((item) => (
+          <button
+            key={item.key}
+            className={`nav-item ${tab === item.key ? 'active' : ''}`}
+            onClick={() => setTab(item.key)}
+          >
+            {(() => {
+              const Icon = item.icon;
+              return <Icon className="nav-icon" aria-hidden="true" />;
+            })()}
+            <span>{item.label}</span>
+          </button>
+        ))}
+      </nav>
+      <div className="sidebar-footer">
+        <div className="user">
+          <div className="avatar">S</div>
+          <div>
+            <div className="user-name">System Admin</div>
+            <div className="user-role">{role}</div>
+          </div>
         </div>
-        <div className="header-sub">출결 · 성적 관리</div>
-      </div>
-
-      <div className="header-right">
-        <div className="header-group">
-          <label className="header-label">화면</label>
-          <select value={tab} onChange={(e) => setTab(e.target.value as Tab)} className="header-select">
-            <option value="dashboard">대시보드</option>
-            <option value="students">학생</option>
-            <option value="courses">과정</option>
-            <option value="attendance">출결</option>
-            <option value="grades">성적</option>
-            <option value="assignments">과제</option>
-          </select>
-        </div>
-
-        <div className="header-group">
-          <label className="header-label">역할</label>
-          <select value={role} onChange={(e) => onRoleChange(e.target.value as Role)} className="header-select">
+        <div>
+          <label style={{ color: '#94a3b8', fontSize: 12 }}>역할</label>
+          <select value={role} onChange={(e) => onRoleChange(e.target.value as Role)}>
             <option value="admin">admin</option>
             <option value="teacher">teacher</option>
           </select>
         </div>
-
         <button className="secondary" onClick={onLogout}>
           로그아웃
         </button>
+      </div>
+    </aside>
+  );
+}
+
+function HeaderBar({ tab }: { tab: Tab }) {
+  const label = NAV_ITEMS.find((i) => i.key === tab)?.label ?? (tab === 'dashboard' ? '대시보드' : tab);
+  return (
+    <div className="header-bar">
+      <div>
+        <div className="header-eyebrow">Admin Dashboard</div>
+        <div className="header-title">출결·성적 관리 · {label}</div>
+      </div>
+      <div className="header-actions">
+        <input className="header-search" placeholder="검색 (학생/강좌/과목)" />
+        <button className="secondary">공지 작성</button>
+        <button>새 작업</button>
       </div>
     </div>
   );
 }
 
-function StatusLegend({ items, title = '상태 레전드' }: { items: { label: string; color: string }[]; title?: string }) {
+function Topbar({ tab, setTab, role }: { tab: Tab; setTab: (t: Tab) => void; role: Role }) {
+  const items = visibleNavItems(role);
+  const stepIndex = STEP_FLOW.findIndex((s) => s.key === tab);
+
+  return (
+    <div className="topbar">
+      <div className="topbar-main">
+        <div className="topbar-title">네비게이션</div>
+        <div className="topbar-chips">
+          {items.map((item) => (
+            <button
+              key={item.key}
+              className={`chip ${tab === item.key ? 'chip-active' : ''}`}
+              onClick={() => setTab(item.key)}
+            >
+              {(() => {
+                const Icon = item.icon;
+                return <Icon className="chip-icon" aria-hidden="true" />;
+              })()}
+              {item.label}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="topbar-actions">
+        <label className="muted" style={{ fontSize: 12 }}>
+          빠른 이동
+        </label>
+        <select value={tab} onChange={(e) => setTab(e.target.value as Tab)}>
+          {items.map((item) => (
+            <option key={item.key} value={item.key}>
+              {item.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="stepper">
+        {STEP_FLOW.map((s, idx) => {
+          const active = idx === stepIndex;
+          const done = stepIndex > idx;
+          return (
+            <div key={s.key} className="step">
+              <div className={`step-dot ${active ? 'active' : ''} ${done ? 'done' : ''}`}>{idx + 1}</div>
+              <div className="step-label">{s.label}</div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function StatusLegend({
+  items,
+  title = '상태 레전드',
+}: {
+  items: { label: string; color: string }[];
+  title?: string;
+}) {
   return (
     <div className="legend">
       <div className="legend-title">{title}</div>
@@ -309,8 +512,8 @@ function DashboardSection({ go }: { go: (tab: Tab) => void }) {
     <div className="dashboard">
       <div className="hero">
         <div>
-          <p className="eyebrow">안녕하세요</p>
-          <h1>오늘의 학사 현황</h1>
+          <p className="eyebrow">안녕하세요, System Admin님!</p>
+          <h1>오늘의 학사 현황을 확인하세요.</h1>
         </div>
         <div className="hero-actions">
           <button className="secondary" onClick={() => go('students')}>
@@ -330,7 +533,6 @@ function DashboardSection({ go }: { go: (tab: Tab) => void }) {
             <div className="stat-value">{totalStudents}</div>
           </div>
         </div>
-
         <div className="stat-card">
           <div className="stat-icon teal">
             <IconBookOpen className="stat-icon-svg" aria-hidden="true" />
@@ -340,7 +542,6 @@ function DashboardSection({ go }: { go: (tab: Tab) => void }) {
             <div className="stat-value">{totalCourses}</div>
           </div>
         </div>
-
         <div className="stat-card">
           <div className="stat-icon green">
             <IconPercent className="stat-icon-svg" aria-hidden="true" />
@@ -352,7 +553,10 @@ function DashboardSection({ go }: { go: (tab: Tab) => void }) {
                 ? `${Math.round(
                     (attendanceSummary.present /
                       Math.max(
-                        attendanceSummary.present + attendanceSummary.absent + attendanceSummary.late + attendanceSummary.excused,
+                        attendanceSummary.present +
+                          attendanceSummary.absent +
+                          attendanceSummary.late +
+                          attendanceSummary.excused,
                         1,
                       )) *
                       100,
@@ -361,7 +565,6 @@ function DashboardSection({ go }: { go: (tab: Tab) => void }) {
             </div>
           </div>
         </div>
-
         <div className="stat-card">
           <div className="stat-icon orange">
             <IconTrendingUp className="stat-icon-svg" aria-hidden="true" />
@@ -375,9 +578,13 @@ function DashboardSection({ go }: { go: (tab: Tab) => void }) {
 
       <div className="quick-actions">
         <div className="quick-title">빠른 작업</div>
-        <div className="quick-toolbar">
-          <label className="quick-label">과정 선택</label>
-          <select value={courseId ?? ''} onChange={(e) => setSelectedCourseId(Number(e.target.value) || null)} className="quick-select">
+        <div style={{ marginBottom: 8, display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+          <label style={{ color: '#94a3b8', fontWeight: 600 }}>과정 선택</label>
+          <select
+            value={courseId ?? ''}
+            onChange={(e) => setSelectedCourseId(Number(e.target.value) || null)}
+            style={{ maxWidth: 260 }}
+          >
             <option value="">전체</option>
             {courses?.map((c) => (
               <option key={c.id} value={c.id}>
@@ -386,7 +593,6 @@ function DashboardSection({ go }: { go: (tab: Tab) => void }) {
             ))}
           </select>
         </div>
-
         <div className="quick-grid">
           <button className="quick-card" onClick={() => go('students')}>
             <IconUserPlus className="quick-icon" aria-hidden="true" />
@@ -394,19 +600,19 @@ function DashboardSection({ go }: { go: (tab: Tab) => void }) {
           </button>
           <button className="quick-card" onClick={() => go('attendance')}>
             <IconCalendarCheck className="quick-icon" aria-hidden="true" />
-            <span>출결 입력</span>
+            <span>오늘 출결 입력</span>
           </button>
           <button className="quick-card" onClick={() => go('grades')}>
             <IconFilePlus className="quick-icon" aria-hidden="true" />
-            <span>평가/점수</span>
+            <span>새 평가 생성</span>
           </button>
           <button className="quick-card" onClick={() => go('courses')}>
             <IconBookOpen className="quick-icon" aria-hidden="true" />
-            <span>과정 관리</span>
+            <span>과정/강좌 관리</span>
           </button>
           <button className="quick-card" onClick={() => go('assignments')}>
             <IconFiles className="quick-icon" aria-hidden="true" />
-            <span>과제 목록</span>
+            <span>과제 관리</span>
           </button>
         </div>
       </div>
@@ -432,7 +638,6 @@ function DashboardSection({ go }: { go: (tab: Tab) => void }) {
             </ul>
           )}
         </div>
-
         <div className="card">
           <div className="header">
             <h3 style={{ margin: 0 }}>최근 과정</h3>
@@ -490,7 +695,9 @@ function StudentsSection({ notify }: { notify: (type: Toast['type'], message: st
   };
 
   const filtered = (students || []).filter((s) => {
-    const matchText = s.full_name.toLowerCase().includes(search.toLowerCase()) || (s.email || '').toLowerCase().includes(search.toLowerCase());
+    const matchText =
+      s.full_name.toLowerCase().includes(search.toLowerCase()) ||
+      (s.email || '').toLowerCase().includes(search.toLowerCase());
     const matchGrade = gradeFilter ? (s.grade_level || '').includes(gradeFilter) : true;
     return matchText && matchGrade;
   });
@@ -499,7 +706,10 @@ function StudentsSection({ notify }: { notify: (type: Toast['type'], message: st
   const pageData = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   const exportCSV = () => {
-    const rows: string[][] = [['id', 'name', 'email', 'grade'], ...((students || []).map((s) => [String(s.id), s.full_name, s.email || '', s.grade_level || '']))];
+    const rows: string[][] = [
+      ['id', 'name', 'email', 'grade'],
+      ...((students || []).map((s) => [String(s.id), s.full_name, s.email || '', s.grade_level || ''])),
+    ];
     const csv = rows.map((r) => r.join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -518,7 +728,6 @@ function StudentsSection({ notify }: { notify: (type: Toast['type'], message: st
           CSV 다운로드
         </button>
       </div>
-
       <div className="form-row">
         <div>
           <label>검색 (이름/이메일)</label>
@@ -529,7 +738,6 @@ function StudentsSection({ notify }: { notify: (type: Toast['type'], message: st
           <input value={gradeFilter} onChange={(e) => setGradeFilter(e.target.value)} placeholder="예: 2-B" />
         </div>
       </div>
-
       <div className="form-row">
         <div>
           <label>이름</label>
@@ -544,14 +752,11 @@ function StudentsSection({ notify }: { notify: (type: Toast['type'], message: st
           <input value={form.grade_level} onChange={(e) => setForm({ ...form, grade_level: e.target.value })} placeholder="2-B" />
         </div>
       </div>
-
       <button className="btn-slim" onClick={addStudent}>
         학생 추가
       </button>
-
       {loading && <p>불러오는 중...</p>}
       {error && <p className="error-text">{error}</p>}
-
       <table className="table">
         <thead>
           <tr>
@@ -572,7 +777,6 @@ function StudentsSection({ notify }: { notify: (type: Toast['type'], message: st
           ))}
         </tbody>
       </table>
-
       <div className="pager">
         <button className="secondary" disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
           이전
@@ -607,7 +811,6 @@ function CoursesSection({ notify }: { notify: (type: Toast['type'], message: str
   return (
     <div className="card">
       <h2 className="section-title">과정/강좌</h2>
-
       <div className="form-row">
         <div>
           <label>과정명</label>
@@ -615,17 +818,18 @@ function CoursesSection({ notify }: { notify: (type: Toast['type'], message: str
         </div>
         <div>
           <label>담당 교사</label>
-          <input value={form.teacher_name} onChange={(e) => setForm({ ...form, teacher_name: e.target.value })} placeholder="예: 김선생" />
+          <input
+            value={form.teacher_name}
+            onChange={(e) => setForm({ ...form, teacher_name: e.target.value })}
+            placeholder="예: 김선생"
+          />
         </div>
       </div>
-
       <button className="btn-slim" onClick={addCourse}>
         과정 추가
       </button>
-
       {loading && <p>불러오는 중...</p>}
       {error && <p className="error-text">{error}</p>}
-
       <table className="table">
         <thead>
           <tr>
@@ -651,15 +855,6 @@ function CoursesSection({ notify }: { notify: (type: Toast['type'], message: str
 function AttendanceSection({ notify }: { notify: (type: Toast['type'], message: string) => void }) {
   const { data: courses } = useLoad<Course[]>(async () => (await api.get('/courses')).data, []);
   const { data: students } = useLoad<Student[]>(async () => (await api.get('/students')).data, []);
-
-  const studentNameById = useMemo(() => {
-    const map: Record<number, string> = {};
-    (students || []).forEach((s) => {
-      map[s.id] = s.full_name;
-    });
-    return map;
-  }, [students]);
-
   const [selectedCourse, setSelectedCourse] = useState<number | null>(null);
   const [sessions, setSessions] = useState<Session[] | null>(null);
   const [records, setRecords] = useState<AttendanceRecord[] | null>(null);
@@ -668,8 +863,11 @@ function AttendanceSection({ notify }: { notify: (type: Toast['type'], message: 
 
   const courseId = selectedCourse ?? courses?.[0]?.id ?? null;
 
-  const getSessionId = (s: any) => s?.id ?? s?.session_id ?? null;
-  const getSessionLabel = (s: any) => s?.session_date ?? s?.date ?? s?.created_at ?? String(getSessionId(s) ?? '');
+  const studentNameById = useMemo(() => {
+    const m = new Map<number, string>();
+    (students || []).forEach((s) => m.set(s.id, s.full_name));
+    return m;
+  }, [students]);
 
   useEffect(() => {
     if (!courseId) return;
@@ -711,7 +909,6 @@ function AttendanceSection({ notify }: { notify: (type: Toast['type'], message: 
   return (
     <div className="card">
       <h2 className="section-title">출결</h2>
-
       <div className="form-row">
         <div>
           <label>과정 선택</label>
@@ -723,19 +920,15 @@ function AttendanceSection({ notify }: { notify: (type: Toast['type'], message: 
             ))}
           </select>
         </div>
-
         <div>
           <label>회차 선택</label>
           <select value={selectedSession || ''} onChange={(e) => setSelectedSession(Number(e.target.value) || null)}>
             <option value="">선택</option>
-            {(sessions || []).map((s: any) => {
-              const sid = getSessionId(s);
-              return (
-                <option key={String(sid)} value={sid}>
-                  {getSessionLabel(s)}
-                </option>
-              );
-            })}
+            {(sessions || []).map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.session_date}
+              </option>
+            ))}
           </select>
         </div>
       </div>
@@ -769,7 +962,6 @@ function AttendanceSection({ notify }: { notify: (type: Toast['type'], message: 
               { label: '공결', color: '#8b5cf6' },
             ]}
           />
-
           <table className="table">
             <thead>
               <tr>
@@ -779,24 +971,21 @@ function AttendanceSection({ notify }: { notify: (type: Toast['type'], message: 
               </tr>
             </thead>
             <tbody>
-              {(records || []).map((r: any) => {
-                const name = r?.student_name ?? studentNameById[r.student_id] ?? '';
-                return (
-                  <tr key={r.student_id}>
-                    <td>{r.student_id}</td>
-                    <td>{name}</td>
-                    <td>
-                      <select value={r.status} onChange={(e) => updateRecord(r.student_id, e.target.value as any)}>
-                        {attendanceOptions.map((o) => (
-                          <option key={o.value} value={o.value}>
-                            {o.label}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                  </tr>
-                );
-              })}
+              {(records || []).map((r) => (
+                <tr key={r.student_id}>
+                  <td>{r.student_id}</td>
+                  <td>{studentNameById.get(r.student_id) ?? '-'}</td>
+                  <td>
+                    <select value={r.status} onChange={(e) => updateRecord(r.student_id, e.target.value as any)}>
+                      {attendanceOptions.map((o) => (
+                        <option key={o.value} value={o.value}>
+                          {o.label}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </>
@@ -822,7 +1011,6 @@ function AssignmentsSection({ notify }: { notify: (type: Toast['type'], message:
   return (
     <div className="card">
       <h2 className="section-title">과제/평가</h2>
-
       <div className="form-row">
         <div>
           <label>과정 선택</label>
@@ -835,9 +1023,7 @@ function AssignmentsSection({ notify }: { notify: (type: Toast['type'], message:
           </select>
         </div>
       </div>
-
       <p className="muted">평가는 성적 탭에서 생성 및 점수 입력을 진행합니다. 여기서는 목록 확인 중심입니다.</p>
-
       <table className="table">
         <thead>
           <tr>
@@ -863,15 +1049,6 @@ function AssignmentsSection({ notify }: { notify: (type: Toast['type'], message:
 function GradesSection({ notify }: { notify: (type: Toast['type'], message: string) => void }) {
   const { data: courses } = useLoad<Course[]>(async () => (await api.get('/courses')).data, []);
   const { data: students } = useLoad<Student[]>(async () => (await api.get('/students')).data, []);
-
-  const studentNameById = useMemo(() => {
-    const map: Record<number, string> = {};
-    (students || []).forEach((s) => {
-      map[s.id] = s.full_name;
-    });
-    return map;
-  }, [students]);
-
   const [selectedCourse, setSelectedCourse] = useState<number | null>(null);
   const [selectedStudent, setSelectedStudent] = useState<number | null>(null);
   const [assessments, setAssessments] = useState<Assessment[] | null>(null);
@@ -880,6 +1057,12 @@ function GradesSection({ notify }: { notify: (type: Toast['type'], message: stri
   const [scoreForm, setScoreForm] = useState<Record<number, number>>({});
   const [studentGrade, setStudentGrade] = useState<GradeSummary[] | null>(null);
   const [courseGrade, setCourseGrade] = useState<CourseGradeSummary | null>(null);
+
+  const studentNameById = useMemo(() => {
+    const m = new Map<number, string>();
+    (students || []).forEach((s) => m.set(s.id, s.full_name));
+    return m;
+  }, [students]);
 
   const exportCourseGrade = () => {
     if (!courseGrade) return notify('error', '강좌 성적 요약이 없습니다.');
@@ -898,7 +1081,10 @@ function GradesSection({ notify }: { notify: (type: Toast['type'], message: stri
 
   const exportStudentGrades = () => {
     if (!studentGrade) return notify('error', '학생 성적 데이터가 없습니다.');
-    const rows: string[][] = [['course_id', 'course_name', 'weighted_score'], ...studentGrade.map((g) => [String(g.course_id), g.course_name, String(g.weighted_score)])];
+    const rows: string[][] = [
+      ['course_id', 'course_name', 'weighted_score'],
+      ...studentGrade.map((g) => [String(g.course_id), g.course_name, String(g.weighted_score)]),
+    ];
     const csv = rows.map((r) => r.join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -958,14 +1144,13 @@ function GradesSection({ notify }: { notify: (type: Toast['type'], message: stri
   };
 
   const viewScores = (assessmentId: number) => {
-    const list: any[] = (scores || []).filter((s: any) => s.assessment_id === assessmentId);
+    const list = (scores || []).filter((s) => s.assessment_id === assessmentId);
     if (list.length === 0) return notify('error', '점수 데이터가 없습니다.');
 
     const rows: string[][] = [
       ['student_id', 'student_name', 'raw_score'],
-      ...list.map((s: any) => [String(s.student_id), s.student_name ?? studentNameById[s.student_id] ?? '', String(s.raw_score)]),
+      ...list.map((s) => [String(s.student_id), studentNameById.get(s.student_id) ?? '-', String(s.raw_score)]),
     ];
-
     const csv = rows.map((r) => r.join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -1024,7 +1209,11 @@ function GradesSection({ notify }: { notify: (type: Toast['type'], message: stri
             </div>
             <div>
               <label>가중치</label>
-              <input type="number" value={assessmentForm.weight} onChange={(e) => setAssessmentForm({ ...assessmentForm, weight: Number(e.target.value) })} />
+              <input
+                type="number"
+                value={assessmentForm.weight}
+                onChange={(e) => setAssessmentForm({ ...assessmentForm, weight: Number(e.target.value) })}
+              />
             </div>
           </div>
           <button className="btn-slim" onClick={addAssessment} disabled={!courseId}>
@@ -1130,7 +1319,7 @@ function ToastView({ toasts }: { toasts: Toast[] }) {
 
 export default function App() {
   const [authed, setAuthed] = useState(false);
-  const [tab, setTab] = useState<Tab>('dashboard');
+  const [tab, setTab] = useState<Tab>('students');
   const [role, setRole] = useState<Role>('admin');
   const [toasts, setToasts] = useState<Toast[]>([]);
 
@@ -1152,12 +1341,19 @@ export default function App() {
     setAuthed(!!token);
   }, []);
 
+  useEffect(() => {
+    const items = visibleNavItems(role);
+    if (!items.find((i) => i.key === tab)) setTab(items[0].key);
+  }, [role, tab]);
+
   if (!authed) return <LoginCard onSuccess={() => setAuthed(true)} />;
 
   return (
     <div className="app-shell">
-      <HeaderBar tab={tab} setTab={setTab} role={role} onRoleChange={setRole} onLogout={logout} />
+      <Sidebar tab={tab} setTab={setTab} onLogout={logout} role={role} onRoleChange={setRole} />
       <main className="main">
+        <HeaderBar tab={tab} />
+        <Topbar tab={tab} setTab={setTab} role={role} />
         {tab === 'dashboard' && <DashboardSection go={go} />}
         {tab === 'students' && <StudentsSection notify={notify} />}
         {tab === 'courses' && <CoursesSection notify={notify} />}
